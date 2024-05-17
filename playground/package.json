@@ -9,7 +9,7 @@
     "@unocss/nuxt": "^0.60.2",
     "electron": "latest",
     "nuxt": "latest",
-    "nuxtron": "workspace:*",
+    "nuxtron-next": "workspace:*",
     "unocss": "^0.60.2"
   }
 }
