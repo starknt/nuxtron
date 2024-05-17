@@ -1,0 +1,15 @@
+{
+  "name": "@nuxtron-next/cli",
+  "version": "0.0.0",
+  "description": "",
+  "bin": {
+    "nuxtron": "bin/nuxtron.mjs"
+  },
+  "files": [
+    "bin",
+    "dist"
+  ],
+  "devDependencies": {
+    "citty": "^0.1.6"
+  }
+}
