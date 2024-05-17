@@ -26,6 +26,6 @@
 [bundle-src]: https://img.shields.io/bundlephobia/minzip/nuxtron-next?style=flat&colorA=080f12&colorB=1fa669&label=minzip
 [bundle-href]: https://bundlephobia.com/result?p=nuxtron-next
 [license-src]: https://img.shields.io/github/license/starknt/nuxtron-next.svg?style=flat&colorA=080f12&colorB=1fa669
-[license-href]: https://github.com/starknt/nuxtron-next/blob/main/LICENSE
+[license-href]: https://github.com/starknt/nuxtron/blob/main/LICENSE
 [jsdocs-src]: https://img.shields.io/badge/jsdocs-reference-080f12?style=flat&colorA=080f12&colorB=1fa669
 [jsdocs-href]: https://www.jsdocs.io/package/nuxtron-next
