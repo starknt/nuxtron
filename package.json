@@ -1,0 +1,30 @@
+{
+  "name": "monorepo",
+  "description": "Nuxt 3 + Electron",
+  "author": {
+    "name": "starknt",
+    "url": "https://github.com/starknt"
+  },
+  "scripts": {
+    "build": "pnpm --filter './packages/**' build",
+    "stub": "pnpm --filter './packages/**' stub",
+    "prepare": "simple-git-hooks",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^2.18.0",
+    "@types/node": "^20.12.12",
+    "eslint": "^9.2.0",
+    "lint-staged": "^15.2.2",
+    "simple-git-hooks": "^2.8.1",
+    "typescript": "^5.4.5",
+    "unbuild": "^2.0.0"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "npx lint-staged"
+  },
+  "lint-staged": {
+    "*": "eslint --fix"
+  }
+}

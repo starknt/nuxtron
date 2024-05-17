@@ -1,0 +1,15 @@
+{
+  "name": "playground",
+  "scripts": {
+    "dev": "nuxi dev",
+    "build": "nuxi build",
+    "prepare": "nuxi prepare"
+  },
+  "devDependencies": {
+    "@unocss/nuxt": "^0.60.2",
+    "electron": "latest",
+    "nuxt": "latest",
+    "nuxtron": "workspace:*",
+    "unocss": "^0.60.2"
+  }
+}

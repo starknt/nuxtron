@@ -1,0 +1,89 @@
+import { dirname, extname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { readFileSync } from 'node:fs'
+import type { RequestListener as NitroRequestListener, OutgoingHttpHeaders } from 'node:http'
+import mime from 'mime'
+import { app, protocol } from 'electron'
+import { ServerResponse } from './mock-env/response'
+import { IncomingMessage } from './mock-env/request'
+
+interface RequestListener {
+  (req: IncomingMessage, res: ServerResponse): void | Promise<void>
+}
+
+class ProtocolServer {
+  constructor(private handler: RequestListener) {}
+
+  async listen(request: Request) {
+    const url = new URL(request.url)
+
+    // TODO: better assets file handler
+    if (/\..*$/.test(url.pathname)) {
+      // TODO: get file path from builder
+      const path = dirname(fileURLToPath(import.meta.url))
+      const filepath = join(path, '.output', 'public', url.pathname)
+      const file = readFileSync(filepath, 'utf-8')
+
+      return new Response(file, {
+        headers: {
+          'Content-Type': mime.getType(extname(filepath)) ?? 'text/plain',
+        },
+      })
+    }
+
+    const req = new IncomingMessage()
+    req.url = request.url.slice('nitro://starknt.com'.length)
+    req.method = request.method
+    const headers: Record<string, string> = {}
+    for (const [key, value] of request.headers.entries())
+      headers[key.toLowerCase()] = value
+
+    req.headers = headers
+    const res = new ServerResponse(req)
+
+    await this.handler(req, res)
+    // eslint-disable-next-line node/prefer-global/buffer
+    return new Response(Buffer.concat(res.buffers.map(b => b.chunk)), {
+      status: res.statusCode,
+      statusText: res.statusMessage,
+      headers: formatOutgoingHttpHeaders(res.getHeaders()),
+    })
+  }
+}
+
+function formatOutgoingHttpHeaders(headers: OutgoingHttpHeaders): HeadersInit {
+  const out: HeadersInit = {}
+  for (const [key, value] of Object.entries(headers)) {
+    if (Array.isArray(value)) {
+      const v = value.join(', ')
+      out[key] = v
+    }
+    else {
+      out[key] = String(value)
+    }
+  }
+  return out
+}
+
+// TODO: refactor api
+export async function createServer(handler: NitroRequestListener) {
+  if (!protocol.isProtocolHandled('nitro')) {
+    protocol.registerSchemesAsPrivileged([
+      {
+        scheme: 'nitro',
+        privileges: {
+          standard: true,
+          supportFetchAPI: true,
+          corsEnabled: true,
+          stream: true,
+          bypassCSP: true,
+        },
+      },
+    ])
+  }
+
+  const server = new ProtocolServer(handler)
+  app.whenReady().then(() => {
+    protocol.handle('nitro', request => server.listen(request))
+  })
+}
