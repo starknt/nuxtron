@@ -1,5 +1,6 @@
 {
   "name": "monorepo",
+  "packageManager": "pnpm@9.1.0",
   "description": "Nuxt 3 + Electron",
   "author": {
     "name": "starknt",
@@ -9,17 +10,27 @@
     "build": "pnpm --filter './packages/**' build",
     "stub": "pnpm --filter './packages/**' stub",
     "prepare": "simple-git-hooks",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint": "eslint . --cache",
+    "lint:fix": "eslint . --cache --fix",
+    "lint:docs": "markdownlint ./docs && case-police 'docs/**/*.md' *.md",
+    "lint:docs:fix": "markdownlint ./docs --fix && case-police 'docs/**/*.md' *.md --fix",
+    "lint:knip": "pnpm dlx knip",
+    "typecheck": "tsc --noEmit",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^2.18.0",
     "@types/node": "^20.12.12",
     "eslint": "^9.2.0",
     "lint-staged": "^15.2.2",
+    "markdownlint-cli": "^0.40.0",
     "simple-git-hooks": "^2.8.1",
     "typescript": "^5.4.5",
-    "unbuild": "^2.0.0"
+    "unbuild": "^2.0.0",
+    "vitepress": "^1.1.4",
+    "vue-tsc": "^2.0.19"
   },
   "simple-git-hooks": {
     "pre-commit": "npx lint-staged"

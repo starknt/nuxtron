@@ -1,0 +1,19 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "workspaces": {
+    ".": {
+      "entry": [
+        "scripts/*"
+      ]
+    },
+    "packages/*": {
+      "entry": [
+        "src/index.ts",
+        "src/runtime/**/*.ts"
+      ],
+      "ignore": [
+        "**/node_modules/**/*"
+      ]
+    }
+  }
+}

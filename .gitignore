@@ -1,2 +1,37 @@
 node_modules
 dist
+
+# Logs
+*.log
+
+# Temp directories
+.temp
+.tmp
+.cache
+
+# Lychee cache
+.lycheecache
+
+# Generated dirs
+dist
+.nuxt
+.nuxt-*
+.vercel
+.netlify
+.output
+.output-*
+.gen
+
+# Junit reports
+reports
+
+# Coverage reports
+coverage
+*.lcov
+.nyc_output
+
+# OSX
+.DS_Store
+
+eslint-typegen.d.ts
+.eslintcache

@@ -2,6 +2,12 @@
   "name": "@nuxtron-next/cli",
   "version": "0.0.0",
   "description": "",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs"
+    }
+  },
   "bin": {
     "nuxtron": "bin/nuxtron.mjs"
   },
