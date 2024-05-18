@@ -14,6 +14,8 @@ export default defineConfig({
     },
   },
 
+  titleTemplate: 'Nuxtron',
+
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
