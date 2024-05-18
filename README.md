@@ -18,6 +18,12 @@
 - [ ] Hydrid Rendering
 - [ ] Development Support(coming soon)
 
+### Nitro Support
+
+- [ ] API Routes
+- [ ] Scheduler Tasks
+- [ ] Websocket
+
 ### Nuxtron Module
 
 - [ ] Inject compoables helper
