@@ -6,7 +6,7 @@
 [![JSDocs][jsdocs-src]][jsdocs-href]
 [![License][license-src]][license-href]
 
-> [!WARNING]
+> [!IMPORTANT]
 > 🚧 _**WIP**, not plublished yet_ 🚧
 
 ## Supports
