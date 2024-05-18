@@ -58,17 +58,17 @@ jobs:
         run: pnpm docs:build
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: github-pages
           path: docs/.vitepress/dist
 
   deploy:
-    needs: build-docs
-    runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+    needs: build-docs
+    runs-on: ubuntu-latest
+    name: deploy
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
