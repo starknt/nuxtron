@@ -2,8 +2,18 @@ import { defineConfig } from 'vitepress'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
+  lang: 'en-US',
+
   title: 'Nuxtron',
   description: 'Nuxtron Document',
+
+  markdown: {
+    theme: {
+      light: 'one-light',
+      dark: 'one-dark-pro',
+    },
+  },
+
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
@@ -20,6 +30,11 @@ export default defineConfig({
         ],
       },
     ],
+
+    editLink: {
+      pattern: 'https://github.com/starknt/nuxtron/edit/main/docs/:path',
+      text: 'Suggest changes to this page',
+    },
 
     socialLinks: [
       { icon: 'github', link: 'https://github.com/starknt/nuxtron' },
