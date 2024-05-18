@@ -14,6 +14,9 @@ importers:
       '@types/node':
         specifier: ^20.12.12
         version: 20.12.12
+      case-police:
+        specifier: 0.6.1
+        version: 0.6.1
       eslint:
         specifier: ^9.2.0
         version: 9.2.0
@@ -1996,6 +1999,10 @@ packages:
 
   caniuse-lite@1.0.30001620:
     resolution: {integrity: sha512-WJvYsOjd1/BYUY6SNGUosK9DUidBPDTnOARHp3fSmFO1ekdxaY6nKRttEVrfMmYi80ctS0kz1wiWmm14fVc3ew==}
+
+  case-police@0.6.1:
+    resolution: {integrity: sha512-tOgkG3HhtzNVHU+HVHqbpVJ3CICPDihtlgoM2C4dx0RLeo6qcNVeBgiYJN5Bln+stxKrnKrw89CFgqYQDqwZQg==}
+    hasBin: true
 
   chalk@2.4.2:
     resolution: {integrity: sha512-Mti+f9lpJNcwF4tWV8/OrTTtF1gZi+f8FqlyAdouralcFWFQWF2+NgCHShjkCb+IFBLq9buZwE1xckQU4peSuQ==}
@@ -8020,6 +8027,8 @@ snapshots:
       lodash.uniq: 4.5.0
 
   caniuse-lite@1.0.30001620: {}
+
+  case-police@0.6.1: {}
 
   chalk@2.4.2:
     dependencies:
