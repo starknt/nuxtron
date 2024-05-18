@@ -2,8 +2,7 @@
   "name": "playground",
   "scripts": {
     "dev": "nuxi dev",
-    "build": "nuxi build",
-    "prepare": "nuxi prepare"
+    "build": "nuxi build"
   },
   "devDependencies": {
     "@unocss/nuxt": "^0.60.2",
