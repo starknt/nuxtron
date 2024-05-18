@@ -1,4 +1,4 @@
-name: Docs
+name: docs
 
 on:
   push:
@@ -48,10 +48,13 @@ jobs:
           node-version: 20
           cache: pnpm
 
+      - name: Setup pages
+        uses: actions/configure-pages@v4
+
       - name: Install dependencies
         run: pnpm install
 
-      - name: Build
+      - name: Build docs
         run: pnpm docs:build
 
       - name: Upload artifact
