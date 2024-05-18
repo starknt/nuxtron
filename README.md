@@ -9,10 +9,19 @@
 > [!IMPORTANT]
 > 🚧 _**WIP**, not plublished yet_ 🚧
 
-## Supports
+## TODO
 
-- [x] Only Production, Nuxt 3, Now Support likes `SSR` etc.
-- [ ] Development Support (Only Nuxt 3)
+### Nuxt 3 Support
+
+- [x] Server Side Rendering
+- [ ] Client Side Rendering
+- [ ] Development Support(coming soon)
+
+### Nuxtron Module
+
+- [ ] Inject compoables helper
+- [ ] Integration Electron Builder
+- [ ] Integration Electron Forge(maybe)
 
 ## License
 
