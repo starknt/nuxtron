@@ -15,6 +15,7 @@
 
 - [x] Server Side Rendering
 - [ ] Client Side Rendering
+- [ ] Hydration Rendering
 - [ ] Development Support(coming soon)
 
 ### Nuxtron Module
