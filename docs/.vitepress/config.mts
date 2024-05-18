@@ -13,7 +13,8 @@ export default defineConfig({
       dark: 'one-dark-pro',
     },
   },
-
+  lastUpdated: true,
+  cleanUrls: true,
   titleTemplate: 'Nuxtron',
 
   themeConfig: {
