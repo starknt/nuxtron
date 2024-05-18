@@ -6,7 +6,8 @@
 [![JSDocs][jsdocs-src]][jsdocs-href]
 [![License][license-src]][license-href]
 
-🚧 _**WIP**, not plublished yet_ 🚧
+> [!WARNING]
+> 🚧 _**WIP**, not plublished yet_ 🚧
 
 ## Supports
 
