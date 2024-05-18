@@ -8,5 +8,5 @@ export default defineBuildConfig({
   ],
   declaration: true,
   clean: true,
-  externals: ['electron', 'nuxt', '@nuxt/schema'],
+  externals: ['electron', 'nuxt', 'nuxt/schema'],
 })

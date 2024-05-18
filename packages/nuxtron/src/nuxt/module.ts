@@ -1,3 +1,5 @@
+// fix TS2742 error
+import type {} from 'nuxt/schema'
 import { defineNuxtModule } from '@nuxt/kit'
 import type { NuxtronOptions } from './types'
 
