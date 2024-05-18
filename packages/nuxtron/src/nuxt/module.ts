@@ -24,6 +24,9 @@ export default defineNuxtModule<NuxtronOptions>({
     },
 
     'nitro:build:before': (nitro) => {
+      if (nitro.options.dev)
+        return
+
       nitro.options = {
         ...nitro.options,
         experimental: {
@@ -38,7 +41,7 @@ export default defineNuxtModule<NuxtronOptions>({
         sourceMap: false,
         externals: {
           ...nitro.options.externals,
-          external: ['electron'],
+          external: Array.isArray(nitro.options.externals.external) ? [...nitro.options.externals.external, 'electron'] : ['electron'],
         },
       }
     },
