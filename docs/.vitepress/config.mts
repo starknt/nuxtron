@@ -24,5 +24,10 @@ export default defineConfig({
     socialLinks: [
       { icon: 'github', link: 'https://github.com/starknt/nuxtron' },
     ],
+
+    footer: {
+      message: 'Released under the MIT License.',
+      copyright: 'Copyright © 2024-present starknt',
+    },
   },
 })
