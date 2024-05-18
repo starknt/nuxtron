@@ -1,6 +1,7 @@
 import { Writable } from 'node:stream'
 import type { OutgoingHttpHeader, OutgoingHttpHeaders } from 'node:http'
 import type { Buffer } from 'node:buffer'
+import type { Socket } from 'node:net'
 import type { IncomingMessage } from './request'
 import type { Callback } from './types'
 
@@ -16,7 +17,7 @@ export class ServerResponse extends Writable {
   public headersSent: boolean = false
   public strictContentLength = false
   public connection: any | null = null
-  public socket: any | null = null
+  public socket: Socket | null = null
 
   public buffers: Array<{ chunk: Buffer, encoding: string, callback: Function }> = []
 
@@ -33,7 +34,8 @@ export class ServerResponse extends Writable {
     this.buffers.push({ chunk, encoding, callback })
   }
 
-  assignSocket(socket: any): void {
+  assignSocket(socket: Socket): void {
+    // @ts-expect-error private
     socket._httpMessage = this
     // socket.on('close', onServerResponseClose)
     this.socket = socket

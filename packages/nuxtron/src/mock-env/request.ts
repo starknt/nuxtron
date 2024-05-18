@@ -1,6 +1,7 @@
 import { Readable } from 'node:stream'
 import type { IncomingHttpHeaders } from 'node:http'
 import type { HeadersObject } from './types'
+import { Socket } from './socket'
 
 export class IncomingMessage extends Readable {
   public aborted: boolean = false
@@ -8,8 +9,8 @@ export class IncomingMessage extends Readable {
   public httpVersionMajor: number = 1
   public httpVersionMinor: number = 1
   public complete: boolean = true
-  public connection: any
-  public socket: any
+  public connection: Socket
+  public socket: Socket
   public headers: IncomingHttpHeaders = {}
   public trailers = {}
   public method: string = 'GET'
@@ -21,9 +22,9 @@ export class IncomingMessage extends Readable {
 
   readable: boolean = false
 
-  constructor(socket?: any) {
+  constructor(socket?: Socket) {
     super()
-    this.socket = this.connection = socket
+    this.socket = this.connection = socket || new Socket()
   }
 
   get rawHeaders() {
