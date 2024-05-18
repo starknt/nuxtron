@@ -2,6 +2,8 @@ import { defineConfig } from 'vitepress'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
+  // https://vitepress.dev/guide/deploy#setting-a-public-base-path
+  base: '/nuxtron/',
   lang: 'en-US',
 
   title: 'Nuxtron',
