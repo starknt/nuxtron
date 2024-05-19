@@ -1,5 +1,5 @@
 {
-  "name": "nuxtron-next",
+  "name": "renuxtron",
   "type": "module",
   "version": "0.0.0",
   "exports": {
@@ -19,7 +19,7 @@
     "nuxt.d.ts"
   ],
   "scripts": {
-    "build": "unbuild",
+    "build": "unbuild && tsx ./scripts/move-runtime.ts",
     "stub": "unbuild --stub"
   },
   "peerDependencies": {
@@ -33,6 +33,7 @@
   },
   "devDependencies": {
     "electron": "^30.0.6",
+    "nitropack": "2.9.6",
     "nuxt": "^3.11.2"
   }
 }

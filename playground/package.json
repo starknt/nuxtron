@@ -2,13 +2,14 @@
   "name": "playground",
   "scripts": {
     "dev": "nuxi dev",
-    "build": "nuxi build"
+    "build": "nuxi build",
+    "dev:prepare": "nuxi prepare"
   },
   "devDependencies": {
     "@unocss/nuxt": "^0.60.2",
     "electron": "latest",
     "nuxt": "latest",
-    "nuxtron-next": "workspace:*",
+    "renuxtron": "workspace:*",
     "unocss": "^0.60.2"
   }
 }
