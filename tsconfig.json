@@ -3,20 +3,6 @@
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "paths": {
-      "#internal/nitro": [
-        "./node_modules/nitropack/dist/runtime"
-      ],
-      "#internal/nitro/app": [
-        "./node_modules/nitropack/dist/runtime/app"
-      ],
-      "#internal/nitro/utils": [
-        "./node_modules/nitropack/dist/runtime/utils"
-      ],
-      "#vue-router": [
-        "./node_modules/vue-router"
-      ]
-    },
     "resolveJsonModule": true,
     "types": [
       "node"
@@ -33,8 +19,6 @@
   },
   "exclude": [
     "**/dist/**",
-    "**/.nuxt/**",
-    "**/nuxt.d.ts",
     "**/examples/**",
     "**/docs/**",
     "**/playground/**"
