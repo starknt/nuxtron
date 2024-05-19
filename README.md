@@ -5,7 +5,7 @@
 [![bundle][bundle-src]][bundle-href]
 [![License][license-src]][license-href]
 
-> [!IMPORTANT]
+> [!DANGER]
 > 🚧 _**WIP**, not plublished yet_ 🚧
 
 ## TODO
@@ -19,13 +19,13 @@
 
 ### Nitro Support
 
-- [ ] API Routes
+- [x] API Routes
 - [ ] Scheduler Tasks
 - [ ] Websocket
 
 ### Nuxtron Module
 
-- [ ] Inject compoables helper
+- [x] Inject compoables helper
 - [ ] Integration Electron Builder
 - [ ] Integration Electron Forge(maybe)
 
