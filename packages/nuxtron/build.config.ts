@@ -4,7 +4,7 @@ export default defineBuildConfig({
   entries: [
     { input: 'src/index', format: 'esm' },
     { input: './src/nuxt/module', outDir: 'dist/nuxt', format: 'esm' },
-    { input: './src/nuxt/runtime', outDir: 'dist/nuxt/runtime', builder: 'mkdist', pattern: ['**/*', '!**/nitro-dev.ts'] },
+    // { input: './src/nuxt/runtime', outDir: 'dist/nuxt/runtime', builder: 'mkdist', pattern: ['**/*', '!**/nitro-dev.ts'] },
   ],
   declaration: true,
   clean: true,

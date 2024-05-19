@@ -1,7 +1,7 @@
 // fix TS2742 error
 import type {} from 'nuxt/schema'
 import { isAbsolute, join } from 'node:path'
-import { createResolver, defineNuxtModule, useLogger, useNuxt } from '@nuxt/kit'
+import { addImportsDir, addVitePlugin, createResolver, defineNuxtModule, useLogger, useNuxt } from '@nuxt/kit'
 import type { NuxtronOptions } from './types'
 import type { RollupConfig } from './builder/types'
 import { build } from './builder/build'
@@ -97,6 +97,20 @@ export default defineNuxtModule<NuxtronOptions>({
   },
 
   setup(options, nuxt) {
+    if (nuxt.options.dev) {
+      addVitePlugin({
+        name: 'nuxtron',
+        enforce: 'pre',
+        load(id) {
+          if (id === 'electron') {
+            logger.log('Skip electron import in dev mode')
+            return 'export default {}'
+          }
+        },
+      })
+    }
     process.env.NUXTRON_DEV_ENTRY = isAbsolute(options.entry) ? options.entry : join(nuxt.options.rootDir, options.entry)
+
+    addImportsDir(resolver.resolve('./runtime/composables'))
   },
 })
