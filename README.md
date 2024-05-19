@@ -15,7 +15,8 @@
 - [x] Server Side Rendering
 - [ ] Client Side Rendering
 - [ ] Hydrid Rendering
-- [ ] Development Mode Support(coming soon)
+- [x] Development Mode Support
+- [x] Production Mode Support
 
 ### Nitro Support
 
