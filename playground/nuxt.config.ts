@@ -8,24 +8,8 @@ export default defineNuxtConfig({
     '@unocss/nuxt',
   ],
 
-  renuxtron: {
+  nuxtron: {
     entry: './desktop/main.ts',
-  },
-
-  nitro: {
-    $production: {
-      experimental: {
-        websocket: false,
-        typescriptBundlerResolution: true,
-      },
-      noExternals: true,
-      preset: 'node',
-      inlineDynamicImports: true,
-      minify: true,
-      sourceMap: false,
-    },
-    rollupConfig: {
-      external: ['electron'],
-    },
+    serverOptions: {},
   },
 })

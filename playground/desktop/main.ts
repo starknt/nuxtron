@@ -9,5 +9,8 @@ app.whenReady()
     win.webContents.openDevTools({
       mode: 'detach',
     })
-    win.loadURL('http://localhost:3000')
+    if (import.meta.dev)
+      win.loadURL('http://localhost:3000')
+    else
+      win.loadURL('nitro://localhost:3000')
   })

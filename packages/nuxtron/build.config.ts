@@ -15,5 +15,6 @@ export default defineBuildConfig({
     'nitropack',
     'rollup',
     'esbuild',
+    'mlly',
   ],
 })

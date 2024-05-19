@@ -12,7 +12,7 @@ interface RequestListener {
 }
 
 class ProtocolServer {
-  constructor(private handler: RequestListener) {}
+  constructor(private handler: RequestListener, private options: ServerOptions) {}
 
   async listen(request: Request) {
     const url = new URL(request.url)
@@ -21,7 +21,7 @@ class ProtocolServer {
     if (/\..*$/.test(url.pathname)) {
       // TODO: get file path from builder
       const path = dirname(fileURLToPath(import.meta.url))
-      const filepath = join(path, '.output', 'public', url.pathname)
+      const filepath = join(path, this.options.assetDir!, url.pathname)
       const file = readFileSync(filepath, 'utf-8')
 
       return new Response(file, {
@@ -65,24 +65,45 @@ function formatOutgoingHttpHeaders(headers: OutgoingHttpHeaders): HeadersInit {
   return out
 }
 
-// TODO: refactor api
-export async function createServer(handler: NitroRequestListener) {
-  if (!protocol.isProtocolHandled('nitro')) {
-    protocol.registerSchemesAsPrivileged([
-      {
-        scheme: 'nitro',
-        privileges: {
-          standard: true,
-          supportFetchAPI: true,
-          corsEnabled: true,
-          stream: true,
-          bypassCSP: true,
-        },
-      },
-    ])
-  }
+export interface ServerOptions {
+  /**
+   * Electron protocol scheme
+   * @default 'nitro'
+   * @link https://www.electronjs.org/docs/latest/api/protocol#protocolregisterschemesasprivilegedcustomschemes
+   */
+  scheme?: string
 
-  const server = new ProtocolServer(handler)
+  /**
+   * Electron protocol privileges
+   * @link https://www.electronjs.org/docs/latest/api/protocol#protocolregisterschemesasprivilegedcustomschemes
+   */
+  privileges?: Electron.Privileges
+
+  /**
+   * Assets file path
+   * @default ./public
+   */
+  assetDir: string
+}
+
+// TODO: refactor api
+export async function createServer(handler: NitroRequestListener, options: ServerOptions) {
+  const scheme = options?.scheme ?? 'nitro'
+  protocol.registerSchemesAsPrivileged([
+    {
+      scheme,
+      privileges: {
+        standard: true,
+        supportFetchAPI: true,
+        corsEnabled: true,
+        stream: true,
+        bypassCSP: true,
+        ...options?.privileges,
+      },
+    },
+  ])
+
+  const server = new ProtocolServer(handler, options)
   app.whenReady().then(() => {
     protocol.handle('nitro', request => server.listen(request))
   })

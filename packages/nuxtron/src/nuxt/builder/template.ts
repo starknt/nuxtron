@@ -1,3 +1,5 @@
+import type { ServerOptions } from '../..'
+
 export const devTemplate = `
 import { useNitroApp } from 'nitropack/runtime/app'
 import { Server } from 'node:http'
@@ -100,6 +102,21 @@ process.on('message', async (msg) => {
 })
 `
 
-export const buildTemplate = `
- // TODO: build template
-`
+export interface BuildTemplateOptions {
+  handler_path: string
+  serverOptions?: ServerOptions
+}
+
+export function buildTemplate(options: BuildTemplateOptions) {
+  return `
+    import { createServer as $_internal_nuxtron_createServer } from 'renuxtron'
+    import { handler as $_internal_handler } from '${options.handler_path}'
+    import $_internal_electron from 'electron'
+
+    const $_internal_nuxtron_server = $_internal_nuxtron_createServer($_internal_handler, ${JSON.stringify(options.serverOptions)})
+    $_internal_electron.app.whenReady()
+    .then(() => {
+      $_internal_electron.protocol.handle('nitro', request => $_internal_nuxtron_server.listen(request))
+    })
+  `
+}
