@@ -6,6 +6,7 @@
     "name": "starknt",
     "url": "https://github.com/starknt"
   },
+  "repository": "https://github.com/starknt/nuxtron",
   "scripts": {
     "build": "pnpm --filter './packages/**' build",
     "stub": "pnpm --filter './packages/**' stub",
