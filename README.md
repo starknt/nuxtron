@@ -15,7 +15,7 @@
 - [x] Server Side Rendering
 - [ ] Client Side Rendering
 - [ ] Hydrid Rendering
-- [ ] Development Support(coming soon)
+- [ ] Development Mode Support(coming soon)
 
 ### Nitro Support
 
@@ -25,7 +25,7 @@
 
 ### Nuxtron Module
 
-- [x] Inject compoables helper
+- [x] Inject compoables helper in Nuxt 3
 - [ ] Integration Electron Builder
 - [ ] Integration Electron Forge(maybe)
 
