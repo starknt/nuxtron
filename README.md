@@ -5,7 +5,7 @@
 [![bundle][bundle-src]][bundle-href]
 [![License][license-src]][license-href]
 
-> [!DANGER]
+> [!WARNING]
 > 🚧 _**WIP**, not plublished yet_ 🚧
 
 ## TODO
