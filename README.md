@@ -12,17 +12,16 @@
 
 ### Nuxt 3 Support
 
-- [x] Server Side Rendering
-- [ ] Client Side Rendering
-- [ ] Hydrid Rendering
-- [x] Development Mode Support
-- [x] Production Mode Support
+#### Render Mode
 
-### Nitro Support
+- [x] SSR
+- [ ] CSR
+- [ ] Hydrid
 
-- [x] API Routes
-- [ ] Scheduler Tasks
-- [ ] Websocket
+#### Dev Mode
+
+- [x] HMR for vue
+- [ ] Hot Reload for nitro
 
 ### Nuxtron Module
 
