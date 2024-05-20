@@ -1,6 +1,6 @@
 import '#internal/nitro/virtual/polyfill'
 import { isAbsolute, join } from 'node:path'
-import { parentPort, threadId } from 'node:worker_threads'
+import { parentPort } from 'node:worker_threads'
 import type { ChildProcess } from 'node:child_process'
 import { spawn } from 'node:child_process'
 import fs from 'node:fs'
@@ -10,7 +10,7 @@ import electron from 'electron'
 import consola from 'consola'
 
 let ps: ChildProcess
-const logger = consola.create({}).withTag('nuxtron')
+const logger = consola.withTag('nuxtron')
 
 async function onReady() {
   const entry = process.env.NUXTRON_DEV_ENTRY ?? join(process.cwd(), '.nuxt', 'dev', 'dev.mjs')
@@ -36,11 +36,7 @@ async function onReady() {
 
   ps = spawn(electron as any, [filepath], {
     stdio: [null, 'pipe', null, 'ipc'],
-    env: {
-      ...process.env,
-      E_PID: process.pid.toString(),
-      E_THREAD_ID: threadId.toString(),
-    },
+    env: process.env,
   })
 
   // record current pid

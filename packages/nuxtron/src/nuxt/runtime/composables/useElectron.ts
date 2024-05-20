@@ -8,6 +8,13 @@ if (import.meta.server) {
     import('electron').then(e => electron = e)
 }
 
+if (import.meta.client) {
+  if (typeof window.require === 'function')
+    electron = window.require('electron')
+  else
+    throw new Error('If you want to use electron in client, you need to open `nodeIntegration`, but i not recommend it.')
+}
+
 export function useElectron() {
   return electron!
 }

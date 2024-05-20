@@ -24,6 +24,7 @@
   },
   "peerDependencies": {
     "electron": ">=28",
+    "nitropack": ">=2",
     "nuxt": ">=3"
   },
   "dependencies": {
@@ -32,6 +33,7 @@
   },
   "devDependencies": {
     "electron": "^30.0.6",
+    "get-port": "^7.1.0",
     "nitropack": "2.9.6",
     "nuxt": "^3.11.2"
   }

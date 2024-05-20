@@ -8,7 +8,7 @@ import type { NuxtronOptions } from './types'
 import type { RollupConfig, Sender } from './builder/types'
 import { build, watch } from './builder/build'
 import { buildTemplate, devTemplate } from './builder/template'
-import { toArray } from './helper'
+import { generatePorts, getAvailablePort, toArray } from './helper'
 
 let nuxtron: NuxtronOptions
 let ROLLUP_CONFIG: RollupConfig
@@ -177,7 +177,7 @@ export default defineNuxtModule<NuxtronOptions>({
     },
   },
 
-  setup(options, nuxt) {
+  async setup(options, nuxt) {
     if (nuxt.options.dev) {
       addVitePlugin({
         name: 'nuxtron',
@@ -193,6 +193,9 @@ export default defineNuxtModule<NuxtronOptions>({
 
     // TODO: improve this
     options.entry = isAbsolute(options.entry) ? options.entry : join(nuxt.options.rootDir, options.entry)
+    options.port = await getAvailablePort({
+      port: [options.port!, ...generatePorts(5175, 5180)],
+    })
     nuxtron = options
 
     // composables
