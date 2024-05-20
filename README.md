@@ -1,4 +1,4 @@
-# Nuxtron
+<h1 align="center">Nuxtron</h1>
 
 [![npm version][npm-version-src]][npm-version-href]
 [![npm downloads][npm-downloads-src]][npm-downloads-href]
@@ -8,26 +8,13 @@
 > [!WARNING]
 > 🚧 _**WIP**, not plublished yet_ 🚧
 
-## TODO
+## What is Nuxtron?
 
-### Nuxt 3 Support
+**Nuxtron** help you build electron app powered by **Nuxt**.
 
-#### Render Mode
+## Document
 
-- [x] SSR
-- [ ] CSR
-- [ ] Hydrid
-
-#### Dev Mode
-
-- [x] HMR for vue
-- [x] Hot Reload for nitro
-
-### Nuxtron Module
-
-- [x] Inject compoables helper in Nuxt 3
-- [ ] Integration Electron Builder
-- [ ] Integration Electron Forge(maybe)
+Read the [documentation](https://starknt.github.io/nuxtron) for more details.
 
 ## License
 
