@@ -23,7 +23,7 @@ export async function build(nitro: Nitro, rollupConfig: RollupConfig) {
 
   if (!nitro.options.static) {
     if (nitro.options.logging.buildSuccess)
-      nitro.logger.success(`${nitroServerName(nitro)} built`)
+      nitro.logger.success(`nuxtron server built`)
 
     // if (nitro.options.logLevel > 1) {
     //   process.stdout.write(
@@ -58,10 +58,4 @@ function formatRollupError(_error: RollupError | OnResolveResult) {
   catch {
     return _error?.toString()
   }
-}
-
-function nitroServerName(nitro: Nitro) {
-  return nitro.options.framework.name === 'nitro'
-    ? 'Nitro Server'
-    : `${nitro.options.framework.name as string} Nitro server`
 }

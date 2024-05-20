@@ -16,5 +16,6 @@ export default defineBuildConfig({
     'rollup',
     'esbuild',
     'mlly',
+    'defu',
   ],
 })

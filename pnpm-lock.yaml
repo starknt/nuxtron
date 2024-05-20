@@ -56,9 +56,6 @@ importers:
       '@nuxt/kit':
         specifier: ^3.11.2
         version: 3.11.2(rollup@4.17.2)
-      defu:
-        specifier: ^6.1.4
-        version: 6.1.4
       mime:
         specifier: ^4.0.3
         version: 4.0.3
