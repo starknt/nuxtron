@@ -1,5 +1,5 @@
 import '#internal/nitro/virtual/polyfill'
-import { join } from 'node:path'
+import { isAbsolute, join } from 'node:path'
 import { parentPort, threadId } from 'node:worker_threads'
 import type { ChildProcess } from 'node:child_process'
 import { spawn } from 'node:child_process'
@@ -13,8 +13,8 @@ let ps: ChildProcess
 const logger = consola.create({}).withTag('nuxtron')
 
 async function onReady() {
-  // TODO: dev entry file path from builder
-  const filepath = join(process.cwd(), '.nuxt', 'dev', 'dev.mjs')
+  const entry = process.env.NUXTRON_DEV_ENTRY ?? join(process.cwd(), '.nuxt', 'dev', 'dev.mjs')
+  const filepath = isAbsolute(entry) ? entry : join(process.cwd(), '.nuxt', entry)
   while (true) {
     if (fs.existsSync(filepath))
       break

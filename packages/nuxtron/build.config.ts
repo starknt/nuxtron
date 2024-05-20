@@ -17,5 +17,6 @@ export default defineBuildConfig({
     'esbuild',
     'mlly',
     'defu',
+    'chokidar',
   ],
 })

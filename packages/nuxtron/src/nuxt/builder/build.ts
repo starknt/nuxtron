@@ -1,12 +1,81 @@
 import { isAbsolute, relative } from 'node:path'
-import type { Nitro } from 'nitropack'
+import { type Nitro, scanHandlers, writeTypes } from 'nitropack'
 import type { RollupError } from 'rollup'
 import rollup from 'rollup'
 import type { OnResolveResult, PartialMessage } from 'esbuild'
-import type { RollupConfig } from './types'
+import defu from 'defu'
+import type { RollupConfig, Sender } from './types'
 
-export function watch(_nitro: Nitro, _rollupConfig: RollupConfig) {
-  // TODO: watch for entry file changes
+function startRollupWatcher(nitro: Nitro, rollupConfig: RollupConfig, _sender: Sender) {
+  const watcher = rollup.watch(
+    defu(rollupConfig, {
+      watch: {
+        chokidar: nitro.options.watchOptions,
+      },
+    }),
+  )
+  let start: number
+
+  watcher.on('event', (event) => {
+    switch (event.code) {
+      // The watcher is (re)starting
+      case 'START': {
+        return
+      }
+
+      // Building an individual bundle
+      case 'BUNDLE_START': {
+        start = Date.now()
+        return
+      }
+
+      // Finished building all bundles
+      case 'END': {
+        // send page:reload action for dev server
+        // sender.send(Action.PageReload)
+
+        // reload electron
+        nitro.hooks.callHook('dev:reload')
+
+        if (nitro.options.logging.buildSuccess) {
+          nitro.logger.success(
+            `Nuxtron server built`,
+            start ? `in ${Date.now() - start} ms` : '',
+          )
+        }
+
+        return
+      }
+
+      // Encountered an error while bundling
+      case 'ERROR': {
+        nitro.logger.error(formatRollupError(event.error))
+      }
+    }
+  })
+  return watcher
+}
+
+export async function watch(nitro: Nitro, rollupConfig: RollupConfig, sender: Sender) {
+  let rollupWatcher: rollup.RollupWatcher
+
+  async function load() {
+    if (rollupWatcher)
+      await rollupWatcher.close()
+
+    await scanHandlers(nitro)
+    rollupWatcher = startRollupWatcher(nitro, rollupConfig, sender)
+    await writeTypes(nitro)
+  }
+  const reload = debounce(load)
+
+  nitro.hooks.hook('close', () => {
+    rollupWatcher.close()
+  })
+
+  nitro.hooks.hook('rollup:reload', () => reload())
+
+  await load()
 }
 
 export async function build(nitro: Nitro, rollupConfig: RollupConfig) {
@@ -20,19 +89,6 @@ export async function build(nitro: Nitro, rollupConfig: RollupConfig) {
   }
 
   // skip nitro json write
-
-  if (!nitro.options.static) {
-    if (nitro.options.logging.buildSuccess)
-      nitro.logger.success(`nuxtron server built`)
-
-    // if (nitro.options.logLevel > 1) {
-    //   process.stdout.write(
-    //     (await generateFSTree(nitro.options.output.serverDir, {
-    //       compressedSizes: nitro.options.logging.compressedSizes,
-    //     })) || '',
-    //   )
-    // }
-  }
 }
 
 function formatRollupError(_error: RollupError | OnResolveResult) {
@@ -57,5 +113,13 @@ function formatRollupError(_error: RollupError | OnResolveResult) {
   }
   catch {
     return _error?.toString()
+  }
+}
+
+function debounce(fn: () => void) {
+  let timer: ReturnType<typeof setTimeout>
+  return function () {
+    clearTimeout(timer)
+    timer = setTimeout(fn, 50)
   }
 }

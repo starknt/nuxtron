@@ -1,3 +1,3 @@
 export default defineEventHandler(() => {
-  return 'Hello Nitro!'
+  return 'v1.0.5'
 })

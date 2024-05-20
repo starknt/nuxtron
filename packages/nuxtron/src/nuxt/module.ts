@@ -5,13 +5,10 @@ import { builtinModules } from 'node:module'
 import { addImportsDir, addVitePlugin, createResolver, defineNuxtModule, useLogger, useNuxt } from '@nuxt/kit'
 import { resolvePath } from 'mlly'
 import type { NuxtronOptions } from './types'
-import type { RollupConfig } from './builder/types'
-import { build } from './builder/build'
+import type { RollupConfig, Sender } from './builder/types'
+import { build, watch } from './builder/build'
 import { buildTemplate, devTemplate } from './builder/template'
-
-export function toArray<T>(value: T | T[]): T[] {
-  return Array.isArray(value) ? value : [value]
-}
+import { toArray } from './helper'
 
 let nuxtron: NuxtronOptions
 let ROLLUP_CONFIG: RollupConfig
@@ -29,6 +26,7 @@ export default defineNuxtModule<NuxtronOptions>({
 
   defaults: {
     entry: '',
+    port: 5174,
   },
 
   hooks: {
@@ -46,12 +44,12 @@ export default defineNuxtModule<NuxtronOptions>({
       const nuxt = useNuxt()
 
       if (nuxt.options.dev) {
-        nitro.inlineDynamicImports = false
-        nitro.virtual!['#internal/nuxtron'] = devTemplate
+        // nitro.inlineDynamicImports = false
+        nitro.virtual!['#internal/nuxtron'] = devTemplate(nuxtron.port!)
         nitro.externals = nitro.externals || {}
       }
       else {
-        // ensure node preset
+        // ensure preset is `node`
         nitro.preset = 'node'
         nitro.experimental = {
           ...nitro.experimental,
@@ -66,6 +64,15 @@ export default defineNuxtModule<NuxtronOptions>({
     },
 
     'nitro:init': (nitro) => {
+      const sender: Sender = {
+        async send(action) {
+          return fetch(`http://localhost:${nuxtron.port}/_nuxtron/${action}`)
+            .then(res => res.text())
+            .then(text => text === `ok:with:${action}`)
+            .catch(() => false)
+        },
+      }
+
       if (!nitro.options.dev) {
         nitro.options.virtual!['#internal/nuxtron'] = buildTemplate({
           handler_path: join(nitro.options.output.serverDir, 'index.mjs'),
@@ -131,7 +138,7 @@ export default defineNuxtModule<NuxtronOptions>({
 
       nitro.hooks.hook('compiled', async (nitro) => {
         if (nitro.options.dev) {
-          await build(nitro, {
+          await watch(nitro, {
             ...ROLLUP_CONFIG,
             input: nuxtron.entry,
             output: {
@@ -139,7 +146,7 @@ export default defineNuxtModule<NuxtronOptions>({
               entryFileNames: 'dev.mjs',
             },
             external: Array.isArray(ROLLUP_CONFIG.external) ? [...ROLLUP_CONFIG.external, 'electron'] : ['electron'],
-          })
+          }, sender)
         }
         else {
           // remove env import meta plugin
@@ -152,7 +159,7 @@ export default defineNuxtModule<NuxtronOptions>({
               if (!isEntry)
                 return
 
-              return `globalThis._importMeta_={url:import.meta.url,env:process.env};\n${code}`
+              return `globalThis._importMeta_={url:import.meta.url,env:process.env};${code}`
             },
           })
           await build(nitro, {
@@ -168,7 +175,6 @@ export default defineNuxtModule<NuxtronOptions>({
         }
       })
     },
-
   },
 
   setup(options, nuxt) {

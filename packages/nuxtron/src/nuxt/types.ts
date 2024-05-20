@@ -14,6 +14,13 @@ export interface NuxtronOptions {
   outDir?: string
 
   /**
+   * @description only in development mode
+   * @description dev server options
+   * @default 5174
+   */
+  port?: number
+
+  /**
    * @description only in production mode
    * @description electron server options
    */
