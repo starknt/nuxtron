@@ -21,7 +21,7 @@
 #### Dev Mode
 
 - [x] HMR for vue
-- [ ] Hot Reload for nitro
+- [x] Hot Reload for nitro
 
 ### Nuxtron Module
 
