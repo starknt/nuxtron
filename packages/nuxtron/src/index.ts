@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs'
 import type { RequestListener as NitroRequestListener, OutgoingHttpHeaders } from 'node:http'
 import mime from 'mime'
 import { app, protocol } from 'electron'
+import defu from 'defu'
 import { ServerResponse } from './mock-env/response'
 import { IncomingMessage } from './mock-env/request'
 
@@ -80,6 +81,11 @@ export interface ServerOptions {
   privileges?: Electron.Privileges
 
   /**
+   *
+   */
+  extraSchemes?: Electron.CustomScheme[]
+
+  /**
    * Assets file path
    * @default ./public
    */
@@ -88,22 +94,30 @@ export interface ServerOptions {
 
 // TODO: refactor api
 export async function createServer(handler: NitroRequestListener, options: ServerOptions) {
-  const scheme = options?.scheme ?? 'nitro'
+  const _options = defu({
+    assetDir: './public',
+    scheme: 'nitro',
+    privileges: {
+
+    },
+    extraSchemes: [],
+  }, options)
   protocol.registerSchemesAsPrivileged([
     {
-      scheme,
+      scheme: _options.scheme,
       privileges: {
         standard: true,
         supportFetchAPI: true,
         corsEnabled: true,
         stream: true,
         bypassCSP: true,
-        ...options?.privileges,
+        ...options.privileges,
       },
     },
+    ...(options?.extraSchemes ?? []),
   ])
 
-  const server = new ProtocolServer(handler, options)
+  const server = new ProtocolServer(handler, _options)
   app.whenReady().then(() => {
     protocol.handle('nitro', request => server.listen(request))
   })

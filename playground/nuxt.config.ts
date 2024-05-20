@@ -12,4 +12,8 @@ export default defineNuxtConfig({
     entry: './desktop/main.ts',
     serverOptions: {},
   },
+
+  nitro: {
+    minify: true,
+  },
 })
