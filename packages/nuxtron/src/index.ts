@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url'
 import { readFileSync } from 'node:fs'
 import type { RequestListener as NitroRequestListener, OutgoingHttpHeaders } from 'node:http'
 import mime from 'mime/lite'
-import { app, protocol } from 'electron'
+import { app, protocol, session } from 'electron'
 import defu from 'defu'
 import { ServerResponse } from './mock-env/response'
 import { IncomingMessage } from './mock-env/request'
@@ -20,7 +20,6 @@ class ProtocolServer {
 
     // TODO: better assets file handler
     if (/\..*$/.test(url.pathname)) {
-      // TODO: get file path from builder
       const path = dirname(fileURLToPath(import.meta.url))
       const filepath = join(path, this.options.assetDir!, url.pathname)
       const file = readFileSync(filepath, 'utf-8')
@@ -33,13 +32,15 @@ class ProtocolServer {
     }
 
     const req = new IncomingMessage()
-    req.url = request.url.slice('nitro://starknt.com'.length)
+    // TODO: replace it
+    req.url = url.pathname
     req.method = request.method
     const headers: Record<string, string> = {}
     for (const [key, value] of request.headers.entries())
       headers[key.toLowerCase()] = value
-
     req.headers = headers
+
+    // TODO: handle stream
     const res = new ServerResponse(req)
 
     await this.handler(req, res)
@@ -75,13 +76,19 @@ export interface ServerOptions {
   scheme?: string
 
   /**
+   * The partition where the protocol should be installed, if not using Electron's default partition.
+   */
+  partition?: string
+
+  /**
    * Electron protocol privileges
    * @link https://www.electronjs.org/docs/latest/api/protocol#protocolregisterschemesasprivilegedcustomschemes
    */
   privileges?: Electron.Privileges
 
   /**
-   *
+   * Electron protocol extra schemes, because the `registerSchemesAsPrivileged` API only call onces when the app before the ready
+   * @link https://www.electronjs.org/docs/latest/api/protocol#protocolregisterschemesasprivilegedcustomschemes
    */
   extraSchemes?: Electron.CustomScheme[]
 
@@ -94,14 +101,13 @@ export interface ServerOptions {
 
 // TODO: refactor api
 export async function createServer(handler: NitroRequestListener, options: ServerOptions) {
-  const _options = defu({
+  const _options = defu<Required<ServerOptions>, ServerOptions[]>({
     assetDir: './public',
     scheme: 'nitro',
-    privileges: {
-
-    },
+    privileges: {},
     extraSchemes: [],
   }, options)
+
   protocol.registerSchemesAsPrivileged([
     {
       scheme: _options.scheme,
@@ -119,6 +125,14 @@ export async function createServer(handler: NitroRequestListener, options: Serve
 
   const server = new ProtocolServer(handler, _options)
   app.whenReady().then(() => {
-    protocol.handle('nitro', request => server.listen(request))
+    if (_options.partition)
+      session.fromPartition(_options.partition)
+    // else
+    //   session.defaultSession.protocol.handle(_options.scheme, request => server.listen(request))
+  })
+
+  // handle multi sessions
+  app.on('session-created', (session) => {
+    session.protocol.handle(_options.scheme, request => server.listen(request))
   })
 }

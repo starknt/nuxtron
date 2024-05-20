@@ -107,10 +107,6 @@ export function buildTemplate(options: BuildTemplateOptions) {
     import { handler as $_internal_handler } from '${options.handler_path}'
     import $_internal_electron from 'electron'
 
-    const $_internal_nuxtron_server = $_internal_nuxtron_createServer($_internal_handler, ${JSON.stringify(options.serverOptions)})
-    $_internal_electron.app.whenReady()
-    .then(() => {
-      $_internal_electron.protocol.handle('nitro', request => $_internal_nuxtron_server.listen(request))
-    })
+    await $_internal_nuxtron_createServer($_internal_handler, ${JSON.stringify(options.serverOptions)})
   `
 }

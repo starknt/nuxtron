@@ -1,6 +1,6 @@
 let electron: typeof import('electron') | undefined
 
-if (import.meta.server) {
+if (import.meta.server && !electron) {
   if (import.meta.dev)
     // eslint-disable-next-line ts/no-require-imports
     electron = require('electron')
@@ -8,13 +8,12 @@ if (import.meta.server) {
     import('electron').then(e => electron = e)
 }
 
-if (import.meta.client) {
-  if (typeof window.require === 'function')
-    electron = window.require('electron')
-  else
-    throw new Error('If you want to use electron in client, you need to open `nodeIntegration`, but i not recommend it.')
-}
-
 export function useElectron() {
+  if (import.meta.client && !electron) {
+    if (typeof window.require === 'function')
+      electron = window.require('electron')
+    else
+      throw new Error('If you want to use electron in client, you need to open `nodeIntegration`, but i not recommend it.')
+  }
   return electron!
 }

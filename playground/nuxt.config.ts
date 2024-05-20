@@ -14,6 +14,6 @@ export default defineNuxtConfig({
   },
 
   nitro: {
-    minify: true,
+    minify: false,
   },
 })
