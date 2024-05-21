@@ -1,5 +1,7 @@
+import { PassThrough, Readable } from 'node:stream'
 import { IncomingMessage } from '../mock-env/request'
 import { ServerResponse } from '../mock-env/response'
+import { Socket } from '../mock-env/socket'
 import type { RequestListener } from '../types'
 import { formatOutgoingHttpHeaders } from '../utils/http'
 import type { ServerHandler } from './types'
@@ -10,7 +12,17 @@ export function handler(handler: RequestListener): ServerHandler {
     const host = uri.host
     const scheme = uri.protocol.replace(/:$/, '')
 
-    const req = new IncomingMessage()
+    let req: IncomingMessage
+    if (request.body) {
+      // @ts-expect-error ignore its type
+      const readable = Readable.fromWeb(request.body)
+      const socket = new Socket()
+      req = new IncomingMessage(socket)
+      readable.pipe(socket)
+    }
+    else {
+      req = new IncomingMessage()
+    }
     // replace protocol and host in url
     req.url = request.url
       .replace(`${scheme}://${host}`, '')
