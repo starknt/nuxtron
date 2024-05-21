@@ -1,3 +1,6 @@
+import { Readable } from 'node:stream'
+import { ReadableStream } from 'node:stream/web'
+
 export default defineEventHandler((event) => {
   setResponseHeader(event, 'Content-Type', 'text/html')
   setResponseHeader(event, 'Cache-Control', 'no-cache')
@@ -22,5 +25,5 @@ export default defineEventHandler((event) => {
     },
   })
 
-  return sendStream(event, stream)
+  return sendStream(event, Readable.fromWeb(stream))
 })

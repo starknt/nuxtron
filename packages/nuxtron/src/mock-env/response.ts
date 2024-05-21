@@ -34,19 +34,22 @@ export class ServerResponse extends OutgoingMessage {
   write(chunk: any, callback?: ((error: Error | null | undefined) => void) | undefined): boolean
   write(chunk: any, encoding: BufferEncoding, callback?: ((error: Error | null | undefined) => void) | undefined): boolean
   write(chunk: unknown, encoding?: unknown, callback?: unknown): boolean {
+    // @ts-expect-error ignore
+    this.buffers.push({ chunk, encoding, callback })
     if (typeof callback === 'function')
       // @ts-expect-error ignore
-      this.passThrough.write(chunk, encoding, cb)
+      return this.passThrough.write(chunk, encoding, cb)
     else
     // @ts-expect-error ignore
-      this.passThrough.write(chunk, encoding)
-    return true
+      return this.passThrough.write(chunk, encoding)
   }
 
   end(cb?: (() => void) | undefined): this
   end(chunk: any, cb?: (() => void) | undefined): this
   end(chunk: any, encoding: BufferEncoding, cb?: (() => void) | undefined): this
   end(chunk?: unknown, encoding?: unknown, callback?: unknown): this {
+    // @ts-expect-error ignore
+    this.buffers.push({ chunk, encoding, callback })
     if (typeof callback === 'function')
       // @ts-expect-error ignore
       this.passThrough.end(chunk, encoding, callback)
@@ -56,22 +59,24 @@ export class ServerResponse extends OutgoingMessage {
     return this
   }
 
-  _write(chunk: any, encoding: BufferEncoding, callback: (error?: Error | null | undefined) => void): void {
-    this.buffers.push({ chunk, encoding, callback })
-  }
-
   writeContinue(_cb: Callback): void {
     /** empty */
   }
 
-  writeEarlyHints(_hints: any, _cb: Callback) {
+  addTrailers(
+    _headers: OutgoingHttpHeaders | ReadonlyArray<[string, string]>,
+  ): void {
     /** empty */
+  }
+
+  writeEarlyHints(_headers: OutgoingHttpHeaders, cb: () => void): void {
+    if (typeof cb === 'function')
+      cb()
   }
 
   assignSocket(socket: Socket): void {
     // @ts-expect-error private
     socket._httpMessage = this
-    // socket.on('close', onServerResponseClose)
     this.socket = socket
     this.emit('socket', socket)
     this._flush()
