@@ -1,7 +1,19 @@
+import type { IncomingMessage } from '../mock-env/request'
+import type { ServerResponse } from '../mock-env/response'
 import type { ServerOptions } from '../types'
 
+export interface ServerHandlerResponse {
+  response: Response
+  originalRequest: IncomingMessage
+  originalResponse: ServerResponse
+}
+
+export interface ServerHandler {
+  (request: Request): Promise<ServerHandlerResponse> | ServerHandlerResponse
+}
+
 export interface HandlerOptions extends ServerOptions {
-  nitroHandler: (request: Request) => Promise<Response> | Response
+  nitroHandler: ServerHandler
 }
 
 export interface Handler {

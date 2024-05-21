@@ -32,11 +32,17 @@ export class ProtocolServer {
         await handler(req, res)
 
         // eslint-disable-next-line node/prefer-global/buffer
-        return new Response(Buffer.concat(res.buffers.map(b => b.chunk)), {
+        const response = new Response(Buffer.concat(res.buffers.map(b => b.chunk)), {
           status: res.statusCode,
           statusText: res.statusMessage,
           headers: formatOutgoingHttpHeaders(res.getHeaders()),
         })
+
+        return {
+          response,
+          originalRequest: req,
+          originalResponse: res,
+        }
       },
     }
   }

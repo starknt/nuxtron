@@ -28,8 +28,7 @@
     "nuxt": ">=3"
   },
   "dependencies": {
-    "@nuxt/kit": "^3.11.2",
-    "mime": "^4.0.3"
+    "@nuxt/kit": "^3.11.2"
   },
   "devDependencies": {
     "electron": "^30.0.6",
