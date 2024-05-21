@@ -1,4 +1,4 @@
-import type { ServerOptions } from '../..'
+import type { ServerOptions } from '../../types'
 
 export function devTemplate(port: number) {
   return `
