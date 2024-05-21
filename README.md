@@ -10,7 +10,7 @@
 
 ## What is Nuxtron?
 
-**Nuxtron** help you build electron app powered by **Nuxt**.
+**Nuxtron** help you build electron app power by [**Nuxt**](https://nuxt.com).
 
 ## Document
 
