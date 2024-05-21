@@ -2,6 +2,7 @@
 const { data, pending } = useFetch('/api/test')
 const version = useState('version', () => '0.0.0')
 const nitroVersion = ref('0.0.0')
+const todoList = ref('')
 
 if (import.meta.server) {
   const { app } = useElectron()
@@ -11,6 +12,25 @@ if (import.meta.server) {
 if (import.meta.client) {
   $fetch('/api/ver')
     .then(ver => nitroVersion.value = ver)
+
+  const decoder = new TextDecoder()
+  function logProgress(reader: ReadableStreamDefaultReader<Uint8Array>): Promise<void> {
+    return reader.read().then(({ value, done }) => {
+      if (done) {
+        if (value)
+          todoList.value += decoder.decode(value)
+        return
+      }
+      if (value)
+        todoList.value += decoder.decode(value)
+
+      return logProgress(reader)
+    })
+  }
+
+  fetch('/api/stream')
+    .then(res => res.body!.getReader())
+    .then(logProgress)
 }
 </script>
 
@@ -39,6 +59,12 @@ if (import.meta.client) {
     <div class="flex gap-2">
       <p>Electron Version: </p>
       <p>{{ version }}</p>
+    </div>
+
+    <div class="mt-4 flex">
+      <p>Stream TODO List</p>
+
+      <div v-html="todoList" />
     </div>
   </div>
 </template>

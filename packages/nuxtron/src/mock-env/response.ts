@@ -1,11 +1,11 @@
-import { Writable } from 'node:stream'
-import type { OutgoingHttpHeader, OutgoingHttpHeaders } from 'node:http'
+import { type OutgoingHttpHeader, type OutgoingHttpHeaders, OutgoingMessage } from 'node:http'
 import type { Buffer } from 'node:buffer'
 import type { Socket } from 'node:net'
+import { PassThrough } from 'node:stream'
 import type { IncomingMessage } from './request'
 import type { Callback } from './types'
 
-export class ServerResponse extends Writable {
+export class ServerResponse extends OutgoingMessage {
   public statusCode: number = 200
   public statusMessage: string = ''
   public upgrading: boolean = false
@@ -16,22 +16,56 @@ export class ServerResponse extends Writable {
   public finished: boolean = false
   public headersSent: boolean = false
   public strictContentLength = false
-  public connection: any | null = null
   public socket: Socket | null = null
 
   public buffers: Array<{ chunk: Buffer, encoding: string, callback: Function }> = []
 
   public req: IncomingMessage
-
-  _headers: Record<string, number | string | string[] | undefined> = {}
+  public passThrough = new PassThrough()
 
   constructor(req: IncomingMessage) {
     super()
     this.req = req
+    // compat h3
+    this.socket = req.socket
+    this.sendDate = true
   }
 
-  _write(chunk: Buffer, encoding: string, callback: Function) {
+  write(chunk: any, callback?: ((error: Error | null | undefined) => void) | undefined): boolean
+  write(chunk: any, encoding: BufferEncoding, callback?: ((error: Error | null | undefined) => void) | undefined): boolean
+  write(chunk: unknown, encoding?: unknown, callback?: unknown): boolean {
+    if (typeof callback === 'function')
+      // @ts-expect-error ignore
+      this.passThrough.write(chunk, encoding, cb)
+    else
+    // @ts-expect-error ignore
+      this.passThrough.write(chunk, encoding)
+    return true
+  }
+
+  end(cb?: (() => void) | undefined): this
+  end(chunk: any, cb?: (() => void) | undefined): this
+  end(chunk: any, encoding: BufferEncoding, cb?: (() => void) | undefined): this
+  end(chunk?: unknown, encoding?: unknown, callback?: unknown): this {
+    if (typeof callback === 'function')
+      // @ts-expect-error ignore
+      this.passThrough.end(chunk, encoding, callback)
+    else
+    // @ts-expect-error ignore
+      this.passThrough.end(chunk, encoding)
+    return this
+  }
+
+  _write(chunk: any, encoding: BufferEncoding, callback: (error?: Error | null | undefined) => void): void {
     this.buffers.push({ chunk, encoding, callback })
+  }
+
+  writeContinue(_cb: Callback): void {
+    /** empty */
+  }
+
+  writeEarlyHints(_hints: any, _cb: Callback) {
+    /** empty */
   }
 
   assignSocket(socket: Socket): void {
@@ -39,7 +73,6 @@ export class ServerResponse extends Writable {
     socket._httpMessage = this
     // socket.on('close', onServerResponseClose)
     this.socket = socket
-    this.connection = socket
     this.emit('socket', socket)
     this._flush()
   }
@@ -48,9 +81,10 @@ export class ServerResponse extends Writable {
     this.flushHeaders()
   }
 
-  detachSocket(_socket: any): void {}
-
-  writeContinue(_callback?: Callback): void {}
+  _implicitHeader() {
+    this.writeHead(this.statusCode)
+    return false
+  }
 
   writeHead(
     statusCode: number,
@@ -66,13 +100,28 @@ export class ServerResponse extends Writable {
     }
     const headers = arg2 || arg1
     if (headers) {
+      let k: any
       if (Array.isArray(headers)) {
-        // TODO: OutgoingHttpHeader[]
+        if (headers.length % 2 !== 0)
+          throw new Error('headers must be an even number of arguments')
+
+        for (let n = 0; n < headers.length; n += 2) {
+          k = headers[n + 0]
+          this.removeHeader(k)
+        }
+
+        for (let n = 0; n < headers.length; n += 2) {
+          k = headers[n + 0]
+          if (k)
+            this.appendHeader(k, headers[n + 1] as any)
+        }
       }
       else {
-        for (const key in headers as any) {
-          // @ts-expect-error string | string[]
-          this.setHeader(key, headers[key])
+        const keys = Object.keys(headers)
+        for (let i = 0; i < keys.length; i++) {
+          k = keys[i]
+          if (k)
+            this.setHeader(k, headers[k] as any)
         }
       }
     }
@@ -80,56 +129,7 @@ export class ServerResponse extends Writable {
     return this
   }
 
-  writeProcessing(): void {}
-
-  setTimeout(_msecs: number, _callback?: Callback): this {
-    return this
-  }
-
-  appendHeader(name: string, value: string | string[]) {
-    name = name.toLowerCase()
-    const current = this._headers[name]
-    const all = [
-      ...(Array.isArray(current) ? current : [current]),
-      ...(Array.isArray(value) ? value : [value]),
-    ].filter(Boolean) as string[]
-    this._headers[name] = all.length > 1 ? all : all[0]
-    return this
-  }
-
-  setHeader(name: string, value: number | string | string[]): this {
-    this._headers[name.toLowerCase()] = value
-    return this
-  }
-
-  getHeader(name: string): number | string | string[] | undefined {
-    return this._headers[name.toLowerCase()]
-  }
-
-  getHeaders(): OutgoingHttpHeaders {
-    return this._headers
-  }
-
-  getHeaderNames(): string[] {
-    return Object.keys(this._headers)
-  }
-
-  hasHeader(name: string): boolean {
-    return name.toLowerCase() in this._headers
-  }
-
-  removeHeader(name: string): void {
-    delete this._headers[name.toLowerCase()]
-  }
-
-  addTrailers(
-    _headers: OutgoingHttpHeaders | ReadonlyArray<[string, string]>,
-  ): void {}
-
-  flushHeaders(): void {}
-
-  writeEarlyHints(_headers: OutgoingHttpHeaders, cb: () => void): void {
-    if (typeof cb === 'function')
-      cb()
+  _finish(): void {
+    this._finish()
   }
 }

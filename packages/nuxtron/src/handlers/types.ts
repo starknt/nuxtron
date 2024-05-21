@@ -2,8 +2,7 @@ import type { IncomingMessage } from '../mock-env/request'
 import type { ServerResponse } from '../mock-env/response'
 import type { ServerOptions } from '../types'
 
-export interface ServerHandlerResponse {
-  response: Response
+export interface ServerHandlerResponse extends Response {
   originalRequest: IncomingMessage
   originalResponse: ServerResponse
 }

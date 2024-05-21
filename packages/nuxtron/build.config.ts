@@ -18,5 +18,8 @@ export default defineBuildConfig({
     'defu',
     'chokidar',
     'get-port',
+
+    // TODO: remove it
+    'consola',
   ],
 })

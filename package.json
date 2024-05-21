@@ -8,6 +8,7 @@
   },
   "repository": "https://github.com/starknt/nuxtron",
   "scripts": {
+    "play": "pnpm build && pnpm play:build && pnpm -C playground play:electron",
     "play:dev": "pnpm -C playground dev",
     "play:build": "pnpm -C playground build",
     "build": "pnpm --filter './packages/**' build",

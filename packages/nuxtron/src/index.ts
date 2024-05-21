@@ -1,11 +1,10 @@
-import type { RequestListener as NitroRequestListener } from 'node:http'
 import { app, protocol, session } from 'electron'
 import defu from 'defu'
-import type { ServerOptions } from './types'
+import type { RequestListener, ServerOptions } from './types'
 import { ProtocolServer } from './server'
 
 // TODO: refactor api
-export async function createServer(handler: NitroRequestListener, options: ServerOptions) {
+export async function createServer(handler: RequestListener, options: ServerOptions) {
   const _options = defu<Required<ServerOptions>, ServerOptions[]>({
     assetDir: './public',
     scheme: 'nitro',

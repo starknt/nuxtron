@@ -1,4 +1,5 @@
 import type * as net from 'node:net'
+import consola from 'consola'
 import { Duplex } from './duplex'
 import type { Callback } from './types'
 
@@ -16,7 +17,7 @@ export class Socket extends Duplex implements net.Socket {
   readonly remoteFamily?: string = ''
   readonly remotePort?: number = 0
   readonly autoSelectFamilyAttemptedAddresses = []
-  readonly readyState: net.SocketReadyState = 'readOnly'
+  readonly readyState: net.SocketReadyState = 'opening'
 
   constructor(_options?: net.SocketConstructorOpts) {
     super()
@@ -27,7 +28,9 @@ export class Socket extends Duplex implements net.Socket {
     _arg1?: BufferEncoding | Callback<Error | undefined>,
     _arg2?: Callback<Error | undefined>,
   ): boolean {
-    return false
+    consola.log('write', _buffer, _arg1, _arg2)
+    // @ts-expect-error ignore
+    return super.write(_buffer, _arg1, _arg2)
   }
 
   connect(
@@ -43,7 +46,8 @@ export class Socket extends Duplex implements net.Socket {
     _arg2?: BufferEncoding | Callback,
     _arg3?: Callback,
   ) {
-    return this
+    // @ts-expect-error ignore
+    return super.end(_arg1, _arg2, _arg3)
   }
 
   setEncoding(_encoding?: BufferEncoding): this {
@@ -95,8 +99,6 @@ export class Socket extends Duplex implements net.Socket {
 }
 
 export class SocketAddress implements net.SocketAddress {
-  readonly __unenv__ = true
-
   address: string
   family: 'ipv4' | 'ipv6'
   port: number

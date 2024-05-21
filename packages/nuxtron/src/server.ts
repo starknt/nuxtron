@@ -35,9 +35,10 @@ export class ProtocolServer {
           return -1
         return 0
       })
+      .map(h => h.handler)
 
     for (const handler of _handlers) {
-      const response = await handler.handler(request, this.handlerOptions)
+      const response = await handler(request, this.handlerOptions)
       if (response)
         return response
     }

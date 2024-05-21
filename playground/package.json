@@ -1,6 +1,7 @@
 {
   "name": "playground",
   "scripts": {
+    "play:electron": "npx electron ./.output/main.prod.mjs",
     "dev": "nuxi dev",
     "build": "nuxi build",
     "dev:prepare": "nuxi prepare"
