@@ -1,4 +1,4 @@
-import type { ServerOptions } from '../index'
+import type { ServerOptions } from '../types'
 
 export interface NuxtronOptions {
   /**
