@@ -1,9 +1,6 @@
 import type { RequestListener, ServerOptions } from './types'
 import type { HandlerOptions } from './handlers/types'
-import { handlers } from './handlers'
-import { IncomingMessage } from './mock-env/request'
-import { ServerResponse } from './mock-env/response'
-import { formatOutgoingHttpHeaders } from './utils/http'
+import { handlers, handler as serverhandler } from './handlers'
 
 export class ProtocolServer {
   private handlerOptions: HandlerOptions
@@ -11,39 +8,7 @@ export class ProtocolServer {
   constructor(handler: RequestListener, options: ServerOptions) {
     this.handlerOptions = {
       ...options,
-      nitroHandler: async (request: Request) => {
-        const uri = new URL(request.url)
-        const host = uri.host
-        const scheme = uri.protocol.replace(/:$/, '')
-
-        const req = new IncomingMessage()
-        // replace protocol and host in url
-        req.url = request.url
-          .replace(`${scheme}://${host}`, '')
-          .replace(/\/$/, '')
-        req.method = request.method
-        const headers: Record<string, string> = {}
-        for (const [key, value] of request.headers.entries())
-          headers[key.toLowerCase()] = value
-        req.headers = headers
-
-        // TODO: handle stream
-        const res = new ServerResponse(req)
-        await handler(req, res)
-
-        // eslint-disable-next-line node/prefer-global/buffer
-        const response = new Response(Buffer.concat(res.buffers.map(b => b.chunk)), {
-          status: res.statusCode,
-          statusText: res.statusMessage,
-          headers: formatOutgoingHttpHeaders(res.getHeaders()),
-        })
-
-        return {
-          response,
-          originalRequest: req,
-          originalResponse: res,
-        }
-      },
+      nitroHandler: serverhandler(handler),
     }
   }
 

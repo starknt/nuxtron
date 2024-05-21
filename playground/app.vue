@@ -1,11 +1,16 @@
 <script setup lang="ts">
-const { data: ver, pending: verPending } = useFetch('/api/ver')
 const { data, pending } = useFetch('/api/test')
 const version = useState('version', () => '0.0.0')
+const nitroVersion = ref('0.0.0')
 
 if (import.meta.server) {
   const { app } = useElectron()
   version.value = app.getVersion()
+}
+
+if (import.meta.client) {
+  $fetch('/api/ver')
+    .then(ver => nitroVersion.value = ver)
 }
 </script>
 
@@ -16,13 +21,10 @@ if (import.meta.server) {
     <div class="flex flex-col gap-2">
       <div class="flex gap-1">
         <p>
-          Nitro Api ver:
+          Nitro Api version:
         </p>
-        <p v-if="verPending">
-          Loading...
-        </p>
-        <p v-else>
-          {{ ver }}
+        <p>
+          {{ nitroVersion }}
         </p>
       </div>
 
