@@ -1,6 +1,6 @@
 // fix TS2742 error
 import { isAbsolute, join, relative } from 'node:path'
-import { addImportsDir, addVitePlugin, createResolver, defineNuxtModule, useLogger, useNuxt } from '@nuxt/kit'
+import { addImportsDir, addTypeTemplate, addVitePlugin, createResolver, defineNuxtModule, useLogger, useNuxt } from '@nuxt/kit'
 import type { NuxtronOptions, NuxtronUserOptions, Sender } from '../types'
 import { build, watch } from './builder/build'
 import { buildTemplate, devTemplate } from './builder/template'
@@ -47,7 +47,6 @@ export default defineNuxtModule<NuxtronUserOptions>({
 
       if (nuxt.options.dev) {
         // nitro.inlineDynamicImports = false
-        nitro.virtual!['#internal/nuxtron'] = devTemplate(nuxt.nuxtron.port!)
         nitro.externals = nitro.externals || {}
       }
       else {
@@ -76,6 +75,9 @@ export default defineNuxtModule<NuxtronUserOptions>({
             .catch(() => false)
         },
       }
+
+      if (nitro.options.dev)
+        nitro.options.virtual!['#internal/nuxtron'] = devTemplate(nuxt.nuxtron.port!)
 
       if (!nitro.options.dev) {
         nitro.options.virtual!['#internal/nuxtron'] = buildTemplate({
@@ -155,5 +157,15 @@ export default defineNuxtModule<NuxtronUserOptions>({
 
     // composables
     addImportsDir(resolver.resolve('./runtime/composables'))
+
+    // inject types
+    addTypeTemplate({
+      filename: 'types/nuxtron.d.ts',
+      getContents: () => `
+        declare module '#internal/nuxtron' {
+
+        }
+      `,
+    })
   },
 })

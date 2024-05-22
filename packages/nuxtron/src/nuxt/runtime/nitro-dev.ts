@@ -1,5 +1,5 @@
 import '#internal/nitro/virtual/polyfill'
-import { isAbsolute, join } from 'node:path'
+import { dirname, isAbsolute, join } from 'node:path'
 import { parentPort } from 'node:worker_threads'
 import type { ChildProcess } from 'node:child_process'
 import { spawn } from 'node:child_process'
@@ -36,7 +36,11 @@ async function onReady() {
 
   ps = spawn(electron as any, [filepath], {
     stdio: [null, 'pipe', null, 'ipc'],
-    env: process.env,
+    env: {
+      ...process.env,
+      __dirname: dirname(filepath),
+      __filename: filepath,
+    },
   })
 
   // record current pid
