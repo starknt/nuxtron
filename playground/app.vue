@@ -34,9 +34,6 @@ if (import.meta.client) {
     .then(res => res.body!.getReader())
     .then(logProgress)
 
-  // @ts-expect-error ignore
-  // eslint-disable-next-line no-console
-  console.log(useIpcRenderer(), window.__NUXTRON__)
   useIpcRenderer()
     .invoke('ipc', 'hello')
     .then((s: string) => example2.value = s)
