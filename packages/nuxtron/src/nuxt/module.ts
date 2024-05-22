@@ -1,21 +1,24 @@
 // fix TS2742 error
-import type {} from 'nuxt/schema'
 import { isAbsolute, join, relative } from 'node:path'
 import { builtinModules } from 'node:module'
 import { addImportsDir, addVitePlugin, createResolver, defineNuxtModule, useLogger, useNuxt } from '@nuxt/kit'
 import { resolvePath } from 'mlly'
-import type { NuxtronOptions } from './types'
-import type { RollupConfig, Sender } from './builder/types'
+import type { NuxtronOptions, NuxtronUserOptions } from './types'
+import type { Sender } from './builder/types'
 import { build, watch } from './builder/build'
 import { buildTemplate, devTemplate } from './builder/template'
 import { generatePorts, getAvailablePort, toArray } from './helper'
 
-let nuxtron: NuxtronOptions
-let ROLLUP_CONFIG: RollupConfig
+declare module '@nuxt/schema' {
+  interface Nuxt {
+    nuxtron: NuxtronOptions
+  }
+}
+
 const resolver = createResolver(import.meta.url)
 const logger = useLogger('nuxtron')
 
-export default defineNuxtModule<NuxtronOptions>({
+export default defineNuxtModule<NuxtronUserOptions>({
   meta: {
     name: 'nuxtron',
     configKey: 'nuxtron',
@@ -45,7 +48,7 @@ export default defineNuxtModule<NuxtronOptions>({
 
       if (nuxt.options.dev) {
         // nitro.inlineDynamicImports = false
-        nitro.virtual!['#internal/nuxtron'] = devTemplate(nuxtron.port!)
+        nitro.virtual!['#internal/nuxtron'] = devTemplate(nuxt.nuxtron.port!)
         nitro.externals = nitro.externals || {}
       }
       else {
@@ -64,9 +67,11 @@ export default defineNuxtModule<NuxtronOptions>({
     },
 
     'nitro:init': (nitro) => {
+      const nuxt = useNuxt()
+
       const sender: Sender = {
         async send(action) {
-          return fetch(`http://localhost:${nuxtron.port}/_nuxtron/${action}`)
+          return fetch(`http://localhost:${nuxt.nuxtron.port}/_nuxtron/${action}`)
             .then(res => res.text())
             .then(text => text === `ok:with:${action}`)
             .catch(() => false)
@@ -77,16 +82,16 @@ export default defineNuxtModule<NuxtronOptions>({
         nitro.options.virtual!['#internal/nuxtron'] = buildTemplate({
           handler_path: join(nitro.options.output.serverDir, 'index.mjs'),
           serverOptions: {
-            ...nuxtron.serverOptions,
+            ...nuxt.nuxtron.serverOptions,
             assetDir:
-            nuxtron.serverOptions?.assetDir
-            ?? relative(nuxtron.outDir ?? nitro.options.output.dir, nitro.options.output.publicDir),
+            nuxt.nuxtron.serverOptions?.assetDir
+            ?? relative(nuxt.nuxtron.outDir ?? nitro.options.output.dir, nitro.options.output.publicDir),
           },
         })
       }
 
       nitro.hooks.hook('rollup:before', (nitro, rollupConfig) => {
-        ROLLUP_CONFIG = rollupConfig
+        nuxt.nuxtron.rollupConfig = rollupConfig
         // override preset related options
         if (nitro.options.dev) {
           rollupConfig.input = resolver.resolve('./runtime/nitro-dev.ts')
@@ -139,19 +144,19 @@ export default defineNuxtModule<NuxtronOptions>({
       nitro.hooks.hook('compiled', async (nitro) => {
         if (nitro.options.dev) {
           await watch(nitro, {
-            ...ROLLUP_CONFIG,
-            input: nuxtron.entry,
+            ...nuxt.nuxtron.rollupConfig,
+            input: nuxt.nuxtron.entry,
             output: {
-              ...ROLLUP_CONFIG.output,
+              ...nuxt.nuxtron.rollupConfig!.output,
               entryFileNames: 'dev.mjs',
             },
-            external: Array.isArray(ROLLUP_CONFIG.external) ? [...ROLLUP_CONFIG.external, 'electron'] : ['electron'],
+            external: Array.isArray(nuxt.nuxtron.rollupConfig!.external) ? [...nuxt.nuxtron.rollupConfig!.external, 'electron'] : ['electron'],
           }, sender)
         }
         else {
           // remove env import meta plugin
           // ROLLUP_CONFIG.plugins = toArray<any>(ROLLUP_CONFIG.plugins)!.filter(p => p.name !== 'import-meta')
-          (ROLLUP_CONFIG.plugins as any[])!.push({
+          (nuxt.nuxtron.rollupConfig!.plugins as any[])!.push({
             name: 'nuxtron:import-env',
             renderChunk(code: string, chunk: any) {
               const isEntry = chunk.isEntry
@@ -163,14 +168,14 @@ export default defineNuxtModule<NuxtronOptions>({
             },
           })
           await build(nitro, {
-            ...ROLLUP_CONFIG,
-            input: nuxtron.entry,
+            ...nuxt.nuxtron.rollupConfig,
+            input: nuxt.nuxtron.entry,
             output: {
-              ...ROLLUP_CONFIG.output,
-              dir: nuxtron.outDir ?? nitro.options.output.dir,
+              ...nuxt.nuxtron.rollupConfig!.output,
+              dir: nuxt.nuxtron.outDir ?? nitro.options.output.dir,
               entryFileNames: 'main.prod.mjs',
             },
-            external: Array.isArray(ROLLUP_CONFIG.external) ? [...ROLLUP_CONFIG.external, 'electron'] : ['electron'],
+            external: Array.isArray(nuxt.nuxtron.rollupConfig!.external) ? [...nuxt.nuxtron.rollupConfig!.external, 'electron'] : ['electron'],
           })
         }
       })
@@ -191,12 +196,11 @@ export default defineNuxtModule<NuxtronOptions>({
       })
     }
 
-    // TODO: improve this
     options.entry = isAbsolute(options.entry) ? options.entry : join(nuxt.options.rootDir, options.entry)
     options.port = await getAvailablePort({
       port: [options.port!, ...generatePorts(5175, 5180)],
     })
-    nuxtron = options
+    nuxt.nuxtron = options
 
     // composables
     addImportsDir(resolver.resolve('./runtime/composables'))

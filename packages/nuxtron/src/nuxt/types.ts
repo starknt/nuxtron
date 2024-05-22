@@ -1,6 +1,7 @@
 import type { ServerOptions } from '../types'
+import type { RollupConfig } from './builder/types'
 
-export interface NuxtronOptions {
+export interface NuxtronUserOptions {
   /**
    * @description entry file path
    */
@@ -25,4 +26,8 @@ export interface NuxtronOptions {
    * @description electron server options
    */
   serverOptions?: Partial<ServerOptions>
+}
+
+export interface NuxtronOptions extends NuxtronUserOptions {
+  rollupConfig?: RollupConfig
 }

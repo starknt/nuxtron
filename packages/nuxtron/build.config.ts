@@ -10,6 +10,7 @@ export default defineBuildConfig({
   externals: [
     'electron',
     'nuxt',
+    '@nuxt/schema',
     'nuxt/schema',
     'nitropack',
     'rollup',
