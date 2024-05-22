@@ -7,6 +7,10 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs"
     },
+    "./dev": {
+      "types": "./dist/dev.d.ts",
+      "import": "./dist/dev.mjs"
+    },
     "./nuxt": {
       "types": "./dist/nuxt/module.d.ts",
       "import": "./dist/nuxt/module.mjs"

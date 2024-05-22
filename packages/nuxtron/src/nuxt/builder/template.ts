@@ -9,10 +9,9 @@ export function devTemplate(port: number) {
     import { runTask, startScheduleRunner } from 'nitropack/runtime/task'
     import { scheduledTasks, tasks } from '#internal/nitro/virtual/tasks'
     import electron from 'electron'
+    import { setupNuxtron } from 'renuxtron/dev'
 
-    const pid = process.env.E_PID
-    const threadId = process.env.E_THREAD_ID
-
+    await setupNuxtron()
     const nitroApp = useNitroApp()
     const server = new Server((req, res) => {
       if(req.url.startsWith('/_nuxtron')) {

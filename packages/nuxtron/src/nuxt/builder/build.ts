@@ -89,6 +89,19 @@ export async function watch(nitro: Nitro, rollupConfig: RollupConfig, sender: Se
 
   nitro.hooks.hook('rollup:reload', () => reload())
 
+  // copy runtime files
+  const runtimeDir = join(dirname(resolveModule('renuxtron') ?? ''), 'runtime')
+  const outputDir = rollupConfig.output.dir || nitro.options.output.dir
+  const destRuntimeDir = join(outputDir, './nuxtron/runtime')
+  await fsp.mkdir(destRuntimeDir, { recursive: true })
+
+  for (const file of await fsp.readdir(runtimeDir)) {
+    if (file.endsWith('.d.ts'))
+      continue
+
+    await fsp.copyFile(join(runtimeDir, file), join(destRuntimeDir, file))
+  }
+
   await load()
 }
 
