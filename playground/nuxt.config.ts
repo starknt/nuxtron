@@ -8,6 +8,12 @@ export default defineNuxtConfig({
     '@unocss/nuxt',
   ],
 
+  experimental: {
+    componentIslands: {
+      selectiveClient: true,
+    },
+  },
+
   nuxtron: {
     entry: './desktop/main.ts',
     serverOptions: {},

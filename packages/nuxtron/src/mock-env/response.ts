@@ -33,16 +33,15 @@ export class ServerResponse extends OutgoingMessage {
 
   write(chunk: any, callback?: ((error: Error | null | undefined) => void) | undefined): boolean
   write(chunk: any, encoding: BufferEncoding, callback?: ((error: Error | null | undefined) => void) | undefined): boolean
-  write(chunk?: any | Callback, encoding?: BufferEncoding | Callback, callback?: Callback): boolean {
+  write(chunk?: any, encoding?: BufferEncoding | Callback, callback?: Callback): boolean {
     if (chunk)
       this.buffers.push(Buffer.from(chunk))
-    if (typeof chunk === 'function' || typeof chunk === 'undefined')
-      return this.outcomingMessage.write(chunk)
-    else if (typeof callback === 'undefined' && typeof encoding === 'function')
+    if (typeof callback === 'undefined' && typeof encoding === 'function')
       return this.outcomingMessage.write(chunk, encoding)
     else if (typeof callback === 'function' && typeof encoding !== 'function')
       return this.outcomingMessage.write(chunk, encoding, callback)
-    return false
+    else
+      return this.outcomingMessage.write(chunk)
   }
 
   end(cb?: (() => void) | undefined): this
@@ -51,12 +50,14 @@ export class ServerResponse extends OutgoingMessage {
   end(chunk?: any | Callback, encoding?: BufferEncoding | Callback, callback?: Callback): this {
     if (chunk)
       this.buffers.push(Buffer.from(chunk))
-    if (typeof chunk === 'function' || typeof chunk === 'undefined')
+    if (typeof chunk === 'function')
       this.outcomingMessage.end(chunk)
     else if (typeof callback === 'undefined' && typeof encoding === 'function')
       this.outcomingMessage.end(chunk, encoding)
     else if (typeof callback === 'function' && typeof encoding !== 'function')
       this.outcomingMessage.end(chunk, encoding, callback)
+    else
+      this.outcomingMessage.end(chunk)
     return this
   }
 

@@ -7,6 +7,10 @@ import { mimeTypes } from '../utils/mime'
 import { HttpStatusCode } from '../utils/http'
 import type { Handler, HandlerOptions, ProtocolServerHandler } from './types'
 
+const blacklist = [
+  '__nuxt',
+]
+
 const handler: Handler = async (request: Request, options: HandlerOptions) => {
   const uri = new URL(request.url)
   const path = dirname(fileURLToPath(import.meta.url))
@@ -101,6 +105,11 @@ function parseRange(text: string, size: number) {
 }
 
 export const resourceHandler: ProtocolServerHandler = {
-  regex: /\..*$/,
+  filter: (request) => {
+    if (blacklist.some(b => request.url.includes(b)))
+      return false
+
+    return /\..*$/.test(request.url)
+  },
   handler,
 }
