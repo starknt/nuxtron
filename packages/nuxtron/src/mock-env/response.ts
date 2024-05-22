@@ -33,29 +33,30 @@ export class ServerResponse extends OutgoingMessage {
 
   write(chunk: any, callback?: ((error: Error | null | undefined) => void) | undefined): boolean
   write(chunk: any, encoding: BufferEncoding, callback?: ((error: Error | null | undefined) => void) | undefined): boolean
-  write(chunk: any, encoding?: unknown, callback?: unknown): boolean {
+  write(chunk?: any | Callback, encoding?: BufferEncoding | Callback, callback?: Callback): boolean {
     if (chunk)
       this.buffers.push(Buffer.from(chunk))
-    if (typeof callback === 'function')
-      // @ts-expect-error ignore
-      return this.outcomingMessage.write(chunk, encoding, callback)
-    else
-    // @ts-expect-error ignore
+    if (typeof chunk === 'function' || typeof chunk === 'undefined')
+      return this.outcomingMessage.write(chunk)
+    else if (typeof callback === 'undefined' && typeof encoding === 'function')
       return this.outcomingMessage.write(chunk, encoding)
+    else if (typeof callback === 'function' && typeof encoding !== 'function')
+      return this.outcomingMessage.write(chunk, encoding, callback)
+    return false
   }
 
   end(cb?: (() => void) | undefined): this
   end(chunk: any, cb?: (() => void) | undefined): this
   end(chunk: any, encoding: BufferEncoding, cb?: (() => void) | undefined): this
-  end(chunk?: any, encoding?: unknown, callback?: unknown): this {
+  end(chunk?: any | Callback, encoding?: BufferEncoding | Callback, callback?: Callback): this {
     if (chunk)
       this.buffers.push(Buffer.from(chunk))
-    if (typeof callback === 'function')
-      // @ts-expect-error ignore
-      this.outcomingMessage.end(chunk, encoding, callback)
-    else
-    // @ts-expect-error ignore
+    if (typeof chunk === 'function' || typeof chunk === 'undefined')
+      this.outcomingMessage.end(chunk)
+    else if (typeof callback === 'undefined' && typeof encoding === 'function')
       this.outcomingMessage.end(chunk, encoding)
+    else if (typeof callback === 'function' && typeof encoding !== 'function')
+      this.outcomingMessage.end(chunk, encoding, callback)
     return this
   }
 
