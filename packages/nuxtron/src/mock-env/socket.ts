@@ -1,5 +1,4 @@
 import type * as net from 'node:net'
-import consola from 'consola'
 import { Duplex } from './duplex'
 import type { Callback } from './types'
 
@@ -28,9 +27,7 @@ export class Socket extends Duplex implements net.Socket {
     _arg1?: BufferEncoding | Callback<Error | undefined>,
     _arg2?: Callback<Error | undefined>,
   ): boolean {
-    consola.log('write', _buffer, _arg1, _arg2)
-    // @ts-expect-error ignore
-    return super.write(_buffer, _arg1, _arg2)
+    return false
   }
 
   connect(

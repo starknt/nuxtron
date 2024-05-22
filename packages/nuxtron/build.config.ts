@@ -1,3 +1,4 @@
+import { execSync } from 'node:child_process'
 import { defineBuildConfig } from 'unbuild'
 
 export default defineBuildConfig({
@@ -19,9 +20,14 @@ export default defineBuildConfig({
     'defu',
     'chokidar',
     'get-port',
-    'local-pkg',
 
-    // TODO: remove it
     'consola',
   ],
+
+  hooks: {
+    'build:done': () => {
+      // move runtime
+      execSync('npx tsx ./scripts/move-runtime.ts')
+    },
+  },
 })

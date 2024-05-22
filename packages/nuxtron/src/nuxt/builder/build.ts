@@ -1,12 +1,24 @@
-import { dirname, isAbsolute, join, relative } from 'node:path'
+import { dirname, isAbsolute, join, relative, win32 } from 'node:path'
 import fsp from 'node:fs/promises'
 import { type Nitro, scanHandlers, writeTypes } from 'nitropack'
 import type { RollupError } from 'rollup'
 import rollup from 'rollup'
 import type { OnResolveResult, PartialMessage } from 'esbuild'
 import defu from 'defu'
-import { resolveModule } from 'local-pkg'
-import type { RollupConfig, Sender } from './types'
+import { resolvePathSync } from 'mlly'
+import type { RollupConfig, Sender } from '../../types'
+
+function resolveModule(path: string) {
+  try {
+    const modulePath = resolvePathSync(path)
+    if (process.platform === 'win32')
+      return win32.normalize(modulePath)
+    return modulePath
+  }
+  catch {
+    return undefined
+  }
+}
 
 function startRollupWatcher(nitro: Nitro, rollupConfig: RollupConfig, _sender: Sender) {
   const watcher = rollup.watch(

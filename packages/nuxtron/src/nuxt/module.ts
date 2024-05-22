@@ -1,8 +1,7 @@
 // fix TS2742 error
 import { isAbsolute, join, relative } from 'node:path'
 import { addImportsDir, addVitePlugin, createResolver, defineNuxtModule, useLogger, useNuxt } from '@nuxt/kit'
-import type { NuxtronOptions, NuxtronUserOptions } from './types'
-import type { Sender } from './builder/types'
+import type { NuxtronOptions, NuxtronUserOptions, Sender } from '../types'
 import { build, watch } from './builder/build'
 import { buildTemplate, devTemplate } from './builder/template'
 import { generatePorts, getAvailablePort, toArray } from './helper'

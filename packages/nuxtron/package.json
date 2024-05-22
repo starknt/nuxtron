@@ -20,7 +20,7 @@
     "nuxt.d.ts"
   ],
   "scripts": {
-    "build": "unbuild && tsx ./scripts/move-runtime.ts",
+    "build": "unbuild",
     "stub": "unbuild --stub"
   },
   "peerDependencies": {
@@ -34,7 +34,6 @@
   "devDependencies": {
     "electron": "^30.0.6",
     "get-port": "^7.1.0",
-    "local-pkg": "^0.5.0",
     "nitropack": "2.9.6",
     "nuxt": "^3.11.2"
   }

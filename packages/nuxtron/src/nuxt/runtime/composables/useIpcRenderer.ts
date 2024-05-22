@@ -1,4 +1,6 @@
-export function useIpcRenderer() {
+import type { IpcRenderer } from 'electron/renderer'
+
+export function useIpcRenderer(): IpcRenderer {
   if (import.meta.server)
     throw new Error('IpcRenderer is not supported in client')
 
@@ -7,9 +9,9 @@ export function useIpcRenderer() {
   }
   else {
     // @ts-expect-error injected through globals preload script
-    if (window._nuxtron)
+    if (window.__NUXTRON__)
       // @ts-expect-error injected through globals preload script
-      return window._nuxtron.ipcRenderer
+      return window.__NUXTRON__.ipcRenderer
     else
       throw new Error('IpcRenderer is not supported in current environment')
   }
