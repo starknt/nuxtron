@@ -1,5 +1,5 @@
 import { type OutgoingHttpHeader, type OutgoingHttpHeaders, OutgoingMessage } from 'node:http'
-import type { Buffer } from 'node:buffer'
+import { Buffer } from 'node:buffer'
 import type { Socket } from 'node:net'
 import { PassThrough } from 'node:stream'
 import type { IncomingMessage } from './request'
@@ -18,10 +18,10 @@ export class ServerResponse extends OutgoingMessage {
   public strictContentLength = false
   public socket: Socket | null = null
 
-  public buffers: Array<{ chunk: Buffer, encoding: string, callback: Function }> = []
+  public buffers: Array<Buffer> = []
 
   public req: IncomingMessage
-  public passThrough = new PassThrough()
+  public outcomingMessage = new PassThrough()
 
   constructor(req: IncomingMessage) {
     super()
@@ -35,13 +35,13 @@ export class ServerResponse extends OutgoingMessage {
   write(chunk: any, encoding: BufferEncoding, callback?: ((error: Error | null | undefined) => void) | undefined): boolean
   write(chunk: unknown, encoding?: unknown, callback?: unknown): boolean {
     // @ts-expect-error ignore
-    this.buffers.push({ chunk, encoding, callback })
+    this.buffers.push(Buffer.from(chunk))
     if (typeof callback === 'function')
       // @ts-expect-error ignore
-      return this.passThrough.write(chunk, encoding, cb)
+      return this.outcomingMessage.write(chunk, encoding, cb)
     else
     // @ts-expect-error ignore
-      return this.passThrough.write(chunk, encoding)
+      return this.outcomingMessage.write(chunk, encoding)
   }
 
   end(cb?: (() => void) | undefined): this
@@ -49,13 +49,13 @@ export class ServerResponse extends OutgoingMessage {
   end(chunk: any, encoding: BufferEncoding, cb?: (() => void) | undefined): this
   end(chunk?: unknown, encoding?: unknown, callback?: unknown): this {
     // @ts-expect-error ignore
-    this.buffers.push({ chunk, encoding, callback })
+    this.buffers.push(Buffer.from(chunk))
     if (typeof callback === 'function')
       // @ts-expect-error ignore
-      this.passThrough.end(chunk, encoding, callback)
+      this.outcomingMessage.end(chunk, encoding, callback)
     else
     // @ts-expect-error ignore
-      this.passThrough.end(chunk, encoding)
+      this.outcomingMessage.end(chunk, encoding)
     return this
   }
 

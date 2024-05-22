@@ -3,7 +3,7 @@ import { IncomingMessage } from '../mock-env/request'
 import { ServerResponse } from '../mock-env/response'
 import { Socket } from '../mock-env/socket'
 import type { RequestListener } from '../types'
-import { formatOutgoingHttpHeaders } from '../utils/http'
+import { HttpStatusCode, formatOutgoingHttpHeaders } from '../utils/http'
 import type { ServerHandler, ServerHandlerResponse } from './types'
 
 export function handler(handler: RequestListener): ServerHandler {
@@ -40,20 +40,20 @@ export function handler(handler: RequestListener): ServerHandler {
       resolved = true
       fn()
     }
+
     return new Promise((resolve) => {
-      res.passThrough.once('error', () => {
+      res.outcomingMessage.once('error', () => {
         guard(() => {
-          const response = new Response(undefined, { status: 500 }) as ServerHandlerResponse
+          const response = new Response(null, { status: HttpStatusCode.INTERNAL_SERVER_ERROR }) as ServerHandlerResponse
           response.originalRequest = req
           response.originalResponse = res
           resolve(response)
         })
       })
 
-      res.passThrough.once('finish', () => {
+      res.outcomingMessage.once('finish', () => {
         guard(() => {
-          const chunks = res.buffers.map(({ chunk }) => Buffer.from(chunk)).filter(Boolean)
-          const response = new Response(Buffer.concat(chunks), {
+          const response = new Response(Buffer.concat(res.buffers), {
             status: res.statusCode,
             statusText: res.statusMessage,
             headers: {
@@ -69,7 +69,7 @@ export function handler(handler: RequestListener): ServerHandler {
 
       res.once('pipe', () => {
         guard(() => {
-          const response = new Response(res.passThrough as any, {
+          const response = new Response(res.outcomingMessage as any, {
             status: res.statusCode,
             statusText: res.statusMessage,
             headers: {

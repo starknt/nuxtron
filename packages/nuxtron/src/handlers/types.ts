@@ -2,6 +2,8 @@ import type { IncomingMessage } from '../mock-env/request'
 import type { ServerResponse } from '../mock-env/response'
 import type { ServerOptions } from '../types'
 
+export type Nullable<T> = T | null | undefined
+
 export interface ServerHandlerResponse extends Response {
   originalRequest: IncomingMessage
   originalResponse: ServerResponse
@@ -16,7 +18,7 @@ export interface HandlerOptions extends ServerOptions {
 }
 
 export interface Handler {
-  (request: Request, options: HandlerOptions): Response | Promise<Response>
+  (request: Request, options: HandlerOptions): Nullable<Response> | Promise<Nullable<Response>>
 }
 
 export interface ProtocolServerHandler {

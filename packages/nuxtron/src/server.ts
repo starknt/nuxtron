@@ -1,6 +1,7 @@
 import type { RequestListener, ServerOptions } from './types'
 import type { HandlerOptions } from './handlers/types'
 import { handlers, handler as serverhandler } from './handlers'
+import { HttpStatusCode } from './utils/http'
 
 export class ProtocolServer {
   private handlerOptions: HandlerOptions
@@ -12,7 +13,7 @@ export class ProtocolServer {
     }
   }
 
-  async listen(request: Request) {
+  async handle(request: Request) {
     const url = request.url
 
     const _handlers = handlers
@@ -43,6 +44,6 @@ export class ProtocolServer {
         return response
     }
 
-    return new Response(null, { status: 404 })
+    return new Response(null, { status: HttpStatusCode.ACCEPTED })
   }
 }

@@ -35,6 +35,6 @@ export async function createServer(handler: RequestListener, options: ServerOpti
 
   // handle multi sessions
   app.on('session-created', (session) => {
-    session.protocol.handle(_options.scheme, request => server.listen(request))
+    session.protocol.handle(_options.scheme, request => server.handle(request))
   })
 }

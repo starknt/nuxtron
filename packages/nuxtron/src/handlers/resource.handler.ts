@@ -4,6 +4,7 @@ import { createReadStream } from 'node:fs'
 import fsp from 'node:fs/promises'
 import type { Readable } from 'node:stream'
 import { mimeTypes } from '../utils/mime'
+import { HttpStatusCode } from '../utils/http'
 import type { Handler, HandlerOptions, ProtocolServerHandler } from './types'
 
 const handler: Handler = async (request: Request, options: HandlerOptions) => {
@@ -12,7 +13,7 @@ const handler: Handler = async (request: Request, options: HandlerOptions) => {
   const filepath = join(path, options.assetDir!, uri.pathname)
   const ext = extname(filepath)
 
-  let statusCode = 200
+  let statusCode = HttpStatusCode.OK
   const headers = new Headers()
   headers.set('Accept-Ranges', 'bytes')
   headers.set('Content-Type', mimeTypes[ext] || 'application/octet-stream')
@@ -27,7 +28,7 @@ const handler: Handler = async (request: Request, options: HandlerOptions) => {
       const [start, end] = ranges[0]
       headers.set('Content-Range', `bytes ${start}-${end}/${stats.size}`)
       headers.set('Content-Length', String(end - start + 1))
-      statusCode = 206
+      statusCode = HttpStatusCode.PARTIAL_CONTENT
       outcomingMessage = createReadStream(filepath, { start, end })
     }
     else {
@@ -42,7 +43,8 @@ const handler: Handler = async (request: Request, options: HandlerOptions) => {
     })
   }
   catch (error) {
-    return new Response('Not Found', { status: 404 })
+    statusCode = HttpStatusCode.NOT_FOUND
+    return new Response('Not Found', { status: statusCode })
   }
 }
 
