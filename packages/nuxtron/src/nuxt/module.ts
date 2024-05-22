@@ -91,6 +91,8 @@ export default defineNuxtModule<NuxtronUserOptions>({
         })
       }
 
+      // nitro.options.plugins.push(resolver.resolve('./runtime/plugins/nuxtron.ts'))
+
       nitro.hooks.hook('rollup:before', (nitro, rollupConfig) => {
         nuxt.nuxtron.rollupConfig = rollupConfig
         // override preset related options
