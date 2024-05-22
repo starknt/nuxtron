@@ -1,6 +1,11 @@
-<h1 align="center">Nuxtron</h1>
+<h1 align="center">
+  <p align="center">
+    <img align="center" width="128" height="128" src="./.github/assets/nuxtron.svg" alt="nuxtron logo" />
+  </p>
 
-[![npm version][npm-version-src]][npm-version-href]
+  <span>Nuxtron</span>
+</h2>
+
 [![npm downloads][npm-downloads-src]][npm-downloads-href]
 [![bundle][bundle-src]][bundle-href]
 [![License][license-src]][license-href]
@@ -22,8 +27,6 @@ Read the [documentation](https://starknt.github.io/nuxtron) for more details.
 
 <!-- Badges -->
 
-[npm-version-src]: https://img.shields.io/npm/v/renuxtron?style=flat&colorA=080f12&colorB=1fa669
-[npm-version-href]: https://npmjs.com/package/renuxtron
 [npm-downloads-src]: https://img.shields.io/npm/dm/renuxtron?style=flat&colorA=080f12&colorB=1fa669
 [npm-downloads-href]: https://npmjs.com/package/renuxtron
 [bundle-src]: https://img.shields.io/bundlephobia/minzip/renuxtron?style=flat&colorA=080f12&colorB=1fa669&label=minzip
