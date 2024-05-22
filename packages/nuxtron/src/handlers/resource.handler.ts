@@ -44,7 +44,12 @@ const handler: Handler = async (request: Request, options: HandlerOptions) => {
   }
   catch (error) {
     statusCode = HttpStatusCode.NOT_FOUND
-    return new Response('Not Found', { status: statusCode })
+    // skip cache
+    headers.set('Cache-Control', 'no-cache')
+    return new Response('Not Found', {
+      status: statusCode,
+      headers,
+    })
   }
 }
 
