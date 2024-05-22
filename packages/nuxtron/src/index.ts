@@ -3,8 +3,7 @@ import defu from 'defu'
 import type { RequestListener, ServerOptions } from './types'
 import { ProtocolServer } from './server'
 
-// TODO: refactor api
-export async function createServer(handler: RequestListener, options: ServerOptions) {
+async function createProtocolServer(handler: RequestListener, options: ServerOptions) {
   const _options = defu<Required<ServerOptions>, ServerOptions[]>({
     assetDir: './public',
     scheme: 'nitro',
@@ -37,4 +36,8 @@ export async function createServer(handler: RequestListener, options: ServerOpti
   app.on('session-created', (session) => {
     session.protocol.handle(_options.scheme, request => server.handle(request))
   })
+}
+
+export async function setupNuxtron(handler: RequestListener, options: ServerOptions) {
+  await createProtocolServer(handler, options)
 }

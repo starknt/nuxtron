@@ -103,9 +103,9 @@ export interface BuildTemplateOptions {
 
 export function buildTemplate(options: BuildTemplateOptions) {
   return `
-    import { createServer as $_internal_nuxtron_createServer } from 'renuxtron'
+    import { setupNuxtron } from 'renuxtron'
     import { handler as $_internal_handler } from '${options.handler_path}'
 
-    await $_internal_nuxtron_createServer($_internal_handler, ${JSON.stringify(options.serverOptions)})
+    await setupNuxtron($_internal_handler, ${JSON.stringify(options.serverOptions)})
   `
 }

@@ -33,12 +33,12 @@ export class ServerResponse extends OutgoingMessage {
 
   write(chunk: any, callback?: ((error: Error | null | undefined) => void) | undefined): boolean
   write(chunk: any, encoding: BufferEncoding, callback?: ((error: Error | null | undefined) => void) | undefined): boolean
-  write(chunk: unknown, encoding?: unknown, callback?: unknown): boolean {
-    // @ts-expect-error ignore
-    this.buffers.push(Buffer.from(chunk))
+  write(chunk: any, encoding?: unknown, callback?: unknown): boolean {
+    if (chunk)
+      this.buffers.push(Buffer.from(chunk))
     if (typeof callback === 'function')
       // @ts-expect-error ignore
-      return this.outcomingMessage.write(chunk, encoding, cb)
+      return this.outcomingMessage.write(chunk, encoding, callback)
     else
     // @ts-expect-error ignore
       return this.outcomingMessage.write(chunk, encoding)
@@ -47,9 +47,9 @@ export class ServerResponse extends OutgoingMessage {
   end(cb?: (() => void) | undefined): this
   end(chunk: any, cb?: (() => void) | undefined): this
   end(chunk: any, encoding: BufferEncoding, cb?: (() => void) | undefined): this
-  end(chunk?: unknown, encoding?: unknown, callback?: unknown): this {
-    // @ts-expect-error ignore
-    this.buffers.push(Buffer.from(chunk))
+  end(chunk?: any, encoding?: unknown, callback?: unknown): this {
+    if (chunk)
+      this.buffers.push(Buffer.from(chunk))
     if (typeof callback === 'function')
       // @ts-expect-error ignore
       this.outcomingMessage.end(chunk, encoding, callback)
