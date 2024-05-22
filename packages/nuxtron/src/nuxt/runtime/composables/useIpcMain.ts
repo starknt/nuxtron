@@ -10,6 +10,7 @@ export function useIpcMain() {
   return {
     ...ipcMain,
     handle(channel, listener) {
+      // Reference: https://github.com/electron/electron/blob/main/lib/browser/ipc-main-impl.ts
       // @ts-expect-error private field
       if (ipcMain._invokeHandlers.has(channel))
         // @ts-expect-error private field
