@@ -1,7 +1,9 @@
+import { join } from 'node:path'
 import { app, protocol, session } from 'electron'
 import defu from 'defu'
 import type { RequestListener, ServerOptions } from './types'
 import { ProtocolServer } from './server'
+import { workDirname } from './utils/path'
 
 async function createProtocolServer(handler: RequestListener, options: ServerOptions) {
   const _options = defu<Required<ServerOptions>, ServerOptions[]>({
@@ -38,6 +40,17 @@ async function createProtocolServer(handler: RequestListener, options: ServerOpt
   })
 }
 
+function setupInject() {
+  app.on('session-created', (session) => {
+    const preloads = session.getPreloads()
+    session.setPreloads([
+      ...preloads,
+      join(workDirname, './nuxtron/runtime/globals.mjs'),
+    ])
+  })
+}
+
 export async function setupNuxtron(handler: RequestListener, options: ServerOptions) {
+  setupInject()
   await createProtocolServer(handler, options)
 }

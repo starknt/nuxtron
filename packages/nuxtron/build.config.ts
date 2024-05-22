@@ -2,11 +2,11 @@ import { defineBuildConfig } from 'unbuild'
 
 export default defineBuildConfig({
   entries: [
-    { input: 'src/index', format: 'esm' },
+    { input: 'src/index', outDir: 'dist', format: 'esm' },
+    { input: 'src/runtime', outDir: 'dist/runtime', builder: 'mkdist' },
     { input: './src/nuxt/module', outDir: 'dist/nuxt', format: 'esm' },
   ],
   declaration: true,
-  clean: true,
   externals: [
     'electron',
     'nuxt',
@@ -19,6 +19,7 @@ export default defineBuildConfig({
     'defu',
     'chokidar',
     'get-port',
+    'local-pkg',
 
     // TODO: remove it
     'consola',

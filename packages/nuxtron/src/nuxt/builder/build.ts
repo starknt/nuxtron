@@ -1,9 +1,11 @@
-import { isAbsolute, relative } from 'node:path'
+import { dirname, isAbsolute, join, relative } from 'node:path'
+import fsp from 'node:fs/promises'
 import { type Nitro, scanHandlers, writeTypes } from 'nitropack'
 import type { RollupError } from 'rollup'
 import rollup from 'rollup'
 import type { OnResolveResult, PartialMessage } from 'esbuild'
 import defu from 'defu'
+import { resolveModule } from 'local-pkg'
 import type { RollupConfig, Sender } from './types'
 
 function startRollupWatcher(nitro: Nitro, rollupConfig: RollupConfig, _sender: Sender) {
@@ -89,6 +91,19 @@ export async function build(nitro: Nitro, rollupConfig: RollupConfig) {
   }
 
   // skip nitro json write
+
+  // copy runtime files
+  const runtimeDir = join(dirname(resolveModule('renuxtron') ?? ''), 'runtime')
+  const outputDir = rollupConfig.output.dir || nitro.options.output.dir
+  const destRuntimeDir = join(outputDir, './nuxtron/runtime')
+  await fsp.mkdir(destRuntimeDir, { recursive: true })
+
+  for (const file of await fsp.readdir(runtimeDir)) {
+    if (file.endsWith('.d.ts'))
+      continue
+
+    await fsp.copyFile(join(runtimeDir, file), join(destRuntimeDir, file))
+  }
 }
 
 function formatRollupError(_error: RollupError | OnResolveResult) {

@@ -10,10 +10,14 @@ if (import.meta.server && !electron) {
 
 export function useElectron() {
   if (import.meta.client && !electron) {
-    if (typeof window.require === 'function')
+    if (typeof window.require === 'function') {
       electron = window.require('electron')
-    else
-      throw new Error('If you want to use electron in client, you need to open `nodeIntegration`, but i not recommend it.')
+    }
+    else {
+      if (import.meta.dev)
+        console.warn('If you want to use electron in client, you need to open `nodeIntegration`, but i not recommend it.')
+      return undefined!
+    }
   }
   return electron!
 }
