@@ -10,6 +10,7 @@ export class ProtocolServer {
     this.handlerOptions = {
       ...options,
       nitroHandler: serverhandler(handler),
+      rawHandler: handler,
     }
   }
 

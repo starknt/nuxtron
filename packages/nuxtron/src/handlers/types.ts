@@ -1,8 +1,8 @@
 import type { IncomingMessage } from '../mock-env/request'
 import type { ServerResponse } from '../mock-env/response'
-import type { ServerOptions } from '../types'
+import type { RequestListener, ServerOptions } from '../types'
 
-export type Nullable<T> = T | null | undefined
+export type Nullable<T> = T | null | undefined | void
 
 export interface ServerHandlerResponse extends Response {
   originalRequest: IncomingMessage
@@ -14,6 +14,7 @@ export interface ServerHandler {
 }
 
 export interface HandlerOptions extends ServerOptions {
+  rawHandler: RequestListener
   nitroHandler: ServerHandler
 }
 

@@ -5,6 +5,7 @@ const example3 = ref('0.0.0')
 const example4 = useState('version', () => '0.0.0')
 const example5 = ref(0)
 const example6 = ref('')
+const example7 = ref('')
 
 if (import.meta.server) {
   useIpcMain().handle('ipc', (_, s: string) => {
@@ -20,11 +21,11 @@ if (import.meta.client) {
     return reader.read().then(({ value, done }) => {
       if (done) {
         if (value)
-          example6.value += decoder.decode(value)
+          example7.value += decoder.decode(value)
         return
       }
       if (value)
-        example6.value += decoder.decode(value)
+        example7.value += decoder.decode(value)
 
       return logProgress(reader)
     })
@@ -40,6 +41,14 @@ if (import.meta.client) {
 
   $fetch('/api/ver')
     .then(ver => example3.value = ver)
+
+  const source = new EventSource('/api/sse')
+  source.onopen = () => {
+    example6.value = 'connected sse'
+  }
+  source.onmessage = ({ data }) => {
+    example6.value = `sse data: ${data}`
+  }
 }
 </script>
 
@@ -66,8 +75,11 @@ if (import.meta.client) {
         </button>
       </Counter>
 
-      <div>Example 6: Stream Response</div>
-      <p v-html="example6" />
+      <div>Example 6: Server Sent Events</div>
+      <p>{{ example6 }}</p>
+
+      <div>Example 7: Stream Response</div>
+      <p v-html="example7" />
     </div>
   </div>
 </template>
