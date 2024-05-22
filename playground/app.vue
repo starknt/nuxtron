@@ -2,7 +2,8 @@
 const { data, pending } = useFetch('/api/test')
 const version = useState('version', () => '0.0.0')
 const nitroVersion = ref('0.0.0')
-const todoList = ref('')
+const example1 = ref('')
+const example2 = ref('Only work with the http2 server, no support')
 
 if (import.meta.server) {
   const { app } = useElectron()
@@ -18,11 +19,11 @@ if (import.meta.client) {
     return reader.read().then(({ value, done }) => {
       if (done) {
         if (value)
-          todoList.value += decoder.decode(value)
+          example1.value += decoder.decode(value)
         return
       }
       if (value)
-        todoList.value += decoder.decode(value)
+        example1.value += decoder.decode(value)
 
       return logProgress(reader)
     })
@@ -61,10 +62,15 @@ if (import.meta.client) {
       <p>{{ version }}</p>
     </div>
 
-    <div class="mt-4 flex">
-      <p>Stream TODO List</p>
+    <p>Stream Example</p>
+    <div class="mt-2 flex flex-col gap-2">
+      <div>Example 1: Stream Response</div>
+      <div v-html="example1" />
 
-      <div v-html="todoList" />
+      <div>Example 2: Send Stream Body</div>
+      <div>
+        <p>{{ example2 }}</p>
+      </div>
     </div>
   </div>
 </template>

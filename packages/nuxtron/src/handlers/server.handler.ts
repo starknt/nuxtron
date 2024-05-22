@@ -1,4 +1,3 @@
-import { Readable } from 'node:stream'
 import { Buffer } from 'node:buffer'
 import { IncomingMessage } from '../mock-env/request'
 import { ServerResponse } from '../mock-env/response'
@@ -17,8 +16,8 @@ export function handler(handler: RequestListener): ServerHandler {
     const req: IncomingMessage = new IncomingMessage(socket)
     if (request.body) {
       // @ts-expect-error ignore it
-      const readable = Readable.fromWeb(request.body)
-      readable.pipe(socket)
+      // compat h3, but not support it, because it's work on the http2 server
+      req.body = request.body
     }
 
     // replace protocol and host in url
