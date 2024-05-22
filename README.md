@@ -12,7 +12,10 @@
 
 > [!WARNING]
 > 🚧 _**WIP**, not plublished yet_ 🚧
-> If you want to know the project status, please check the [GitHub issue](https://github.com/starknt/nuxtron/issues/1).
+
+## Note
+
+If you want to know the project status, please check the [GitHub issue](https://github.com/starknt/nuxtron/issues/1).
 
 ## What is Nuxtron?
 
