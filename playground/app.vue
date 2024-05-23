@@ -57,8 +57,10 @@ if (import.meta.client) {
 </script>
 
 <template>
-  <div class="p4">
-    <p>Example</p>
+  <div class="p4 pt-2">
+    <div class="flex justify-center">
+      <Logo />
+    </div>
     <div class="mt-2 flex flex-col gap-2">
       <div>Example 1: Send Stream Body</div>
       <p>{{ example1 }}</p>

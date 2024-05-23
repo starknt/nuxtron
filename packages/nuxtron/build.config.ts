@@ -21,7 +21,7 @@ export default defineBuildConfig({
     'defu',
     'chokidar',
     'get-port',
-
+    'magic-string',
     'consola',
   ],
 

@@ -7,6 +7,8 @@ import type { OnResolveResult, PartialMessage } from 'esbuild'
 import defu from 'defu'
 import { resolvePathSync } from 'mlly'
 import type { RollupConfig, Sender } from '../../types'
+import { toArray } from '../helper'
+import { esmShim } from './plugins/esm-shim'
 
 function resolveModule(path: string) {
   try {
@@ -110,6 +112,8 @@ export async function watch(nitro: Nitro, rollupConfig: RollupConfig, sender: Se
 }
 
 export async function build(nitro: Nitro, rollupConfig: RollupConfig) {
+  toArray(rollupConfig.plugins).push(esmShim())
+
   if (!nitro.options.static) {
     const build = await rollup.rollup(rollupConfig!).catch((error) => {
       nitro.logger.error(formatRollupError(error))

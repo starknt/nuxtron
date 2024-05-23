@@ -3,15 +3,13 @@ import { defineNuxtConfig } from 'nuxt/config'
 export default defineNuxtConfig({
   telemetry: false,
 
-  modules: [
-    'renuxtron/nuxt',
-    '@unocss/nuxt',
-  ],
+  modules: ['renuxtron/nuxt', '@unocss/nuxt'],
 
   experimental: {
     componentIslands: {
       selectiveClient: true,
     },
+    appManifest: true,
   },
 
   nuxtron: {
