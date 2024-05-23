@@ -3,7 +3,7 @@ import { resourceHandler } from './resource.handler'
 import { sseHandler } from './sse.handler'
 import type { ProtocolServerHandler } from './types'
 
-export { handler } from './server.handler'
+export { handler } from './basic.handler'
 
 export const handlers: Array<ProtocolServerHandler> = [
   resourceHandler,

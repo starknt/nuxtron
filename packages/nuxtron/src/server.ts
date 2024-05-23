@@ -22,6 +22,7 @@ export class ProtocolServer {
       .replace(`${scheme}://${host}`, '')
       .replace(/\/$/, '')
     request = rewriteURL(request, url)
+
     const _handlers = handlers
       .filter((h) => {
         if (h.regex)
