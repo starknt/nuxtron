@@ -1,6 +1,6 @@
-import type { Handler, HandlerOptions, ProtocolServerHandler } from './types'
+import type { Handler, HandlerOptions, ProtocolServerHandler, ServerRequest } from './types'
 
-const handler: Handler = async (request: Request, options: HandlerOptions) => {
+const handler: Handler = async (request: ServerRequest, options: HandlerOptions) => {
   return options.nitroHandler(request)
 }
 

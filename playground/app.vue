@@ -39,7 +39,7 @@ if (import.meta.client) {
     .invoke('ipc', 'hello')
     .then((s: string) => example2.value = s)
 
-  $fetch('/api/ver')
+  $fetch('/api/hello')
     .then(ver => example3.value = ver)
 
   const source = new EventSource('/api/sse')

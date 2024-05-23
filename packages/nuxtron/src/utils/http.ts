@@ -1,4 +1,5 @@
 import type { OutgoingHttpHeaders } from 'node:http'
+import type { ServerRequest } from '../handlers/types'
 
 export function formatOutgoingHttpHeaders(headers: OutgoingHttpHeaders): HeadersInit {
   const out: HeadersInit = {}
@@ -32,4 +33,9 @@ export enum HttpStatusCode {
   SERVICE_UNAVAILABLE = 503,
   GATEWAY_TIMEOUT = 504,
   METHOD_NOT_ALLOWED = 405,
+}
+
+export function rewriteURL(request: Request, url: string): ServerRequest {
+  (request as ServerRequest).$url = url
+  return request as ServerRequest
 }

@@ -1,7 +1,7 @@
 import type { RequestListener, ServerOptions } from './types'
-import type { HandlerOptions } from './handlers/types'
+import type { HandlerOptions, ServerRequest } from './handlers/types'
 import { handlers, handler as serverhandler } from './handlers'
-import { HttpStatusCode } from './utils/http'
+import { HttpStatusCode, rewriteURL } from './utils/http'
 
 export class ProtocolServer {
   private handlerOptions: HandlerOptions
@@ -14,9 +14,14 @@ export class ProtocolServer {
     }
   }
 
-  async handle(request: Request) {
+  async handle(request: ServerRequest) {
+    const uri = new URL(request.url)
+    const host = uri.host
+    const scheme = uri.protocol.replace(/:$/, '')
     const url = request.url
-
+      .replace(`${scheme}://${host}`, '')
+      .replace(/\/$/, '')
+    request = rewriteURL(request, url)
     const _handlers = handlers
       .filter((h) => {
         if (h.regex)

@@ -4,14 +4,10 @@ import { ServerResponse } from '../mock-env/response'
 import { Socket } from '../mock-env/socket'
 import type { RequestListener } from '../types'
 import { HttpStatusCode, formatOutgoingHttpHeaders } from '../utils/http'
-import type { ServerHandler, ServerHandlerResponse } from './types'
+import type { ServerHandler, ServerHandlerResponse, ServerRequest } from './types'
 
 export function handler(handler: RequestListener): ServerHandler {
-  const serverhandler: ServerHandler = async (request: Request): Promise<ServerHandlerResponse> => {
-    const uri = new URL(request.url)
-    const host = uri.host
-    const scheme = uri.protocol.replace(/:$/, '')
-
+  const serverhandler: ServerHandler = async (request: ServerRequest): Promise<ServerHandlerResponse> => {
     const socket = new Socket()
     const req: IncomingMessage = new IncomingMessage(socket)
     if (request.body) {
@@ -21,9 +17,7 @@ export function handler(handler: RequestListener): ServerHandler {
     }
 
     // replace protocol and host in url
-    req.url = request.url
-      .replace(`${scheme}://${host}`, '')
-      .replace(/\/$/, '')
+    req.url = request.$url
     req.method = request.method
     const headers: Record<string, string> = {}
     for (const [key, value] of request.headers.entries())

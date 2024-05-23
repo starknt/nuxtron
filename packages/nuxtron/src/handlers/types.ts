@@ -4,13 +4,17 @@ import type { RequestListener, ServerOptions } from '../types'
 
 export type Nullable<T> = T | null | undefined | void
 
+export interface ServerRequest extends Request {
+  $url: string
+}
+
 export interface ServerHandlerResponse extends Response {
   originalRequest: IncomingMessage
   originalResponse: ServerResponse
 }
 
 export interface ServerHandler {
-  (request: Request): Promise<ServerHandlerResponse> | ServerHandlerResponse
+  (request: ServerRequest): Promise<ServerHandlerResponse> | ServerHandlerResponse
 }
 
 export interface HandlerOptions extends ServerOptions {
@@ -19,12 +23,12 @@ export interface HandlerOptions extends ServerOptions {
 }
 
 export interface Handler {
-  (request: Request, options: HandlerOptions): Nullable<Response> | Promise<Nullable<Response>>
+  (request: ServerRequest, options: HandlerOptions): Nullable<Response> | Promise<Nullable<Response>>
 }
 
 export interface ProtocolServerHandler {
   regex?: RegExp
-  filter?: (request: Request) => boolean
+  filter?: (request: ServerRequest) => boolean
   fallback?: boolean
   handler: Handler
 }

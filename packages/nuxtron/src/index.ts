@@ -4,6 +4,7 @@ import defu from 'defu'
 import type { RequestListener, ServerOptions } from './types'
 import { ProtocolServer } from './server'
 import { workDirname } from './utils/path'
+import type { ServerRequest } from './handlers/types'
 
 async function createProtocolServer(handler: RequestListener, options: ServerOptions) {
   const _options = defu<Required<ServerOptions>, ServerOptions[]>({
@@ -36,7 +37,7 @@ async function createProtocolServer(handler: RequestListener, options: ServerOpt
 
   // handle multi sessions
   app.on('session-created', (session) => {
-    session.protocol.handle(_options.scheme, request => server.handle(request))
+    session.protocol.handle(_options.scheme, request => server.handle(request as ServerRequest))
   })
 }
 
