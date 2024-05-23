@@ -6,6 +6,7 @@ const example4 = useState('version', () => '0.0.0')
 const example5 = ref(0)
 const example6 = ref('')
 const example7 = ref('')
+const example8 = ref('')
 
 if (import.meta.server) {
   useIpcMain().handle('ipc', (_, s: string) => {
@@ -40,7 +41,10 @@ if (import.meta.client) {
     .then((s: string) => example2.value = s)
 
   $fetch('/api/hello')
-    .then(ver => example3.value = ver)
+    .then(data => example3.value = data)
+
+  $fetch('/api/hello2')
+    .then(data => example8.value = data)
 
   const source = new EventSource('/api/sse')
   source.onopen = () => {
@@ -80,6 +84,9 @@ if (import.meta.client) {
 
       <div>Example 7: Stream Response</div>
       <p v-html="example7" />
+
+      <div>Example 7: Server Fetch</div>
+      <p>{{ example8 }}</p>
     </div>
   </div>
 </template>
