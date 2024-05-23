@@ -13,12 +13,13 @@ const handler: Handler = async (request: ServerRequest, options: HandlerOptions)
   const res = new ServerResponse(req)
   options.rawHandler(req, res)
   return new Promise((resolve) => {
-    const response = new Response(res.outcomingMessage as any, {
-      headers: {
-        'Content-Type': 'text/event-stream; charset=utf-8',
-      },
+    // when first chunk written, resolve
+    res.once('write', () => {
+      const response = new Response(res.outcomingMessage as any, {
+        headers: formatOutgoingHttpHeaders(res.getHeaders()),
+      })
+      resolve(response)
     })
-    resolve(response)
   })
 }
 

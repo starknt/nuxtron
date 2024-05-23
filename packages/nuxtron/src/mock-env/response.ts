@@ -36,6 +36,8 @@ export class ServerResponse extends OutgoingMessage {
   write(chunk?: any, encoding?: BufferEncoding | Callback, callback?: Callback): boolean {
     if (chunk)
       this.buffers.push(Buffer.from(chunk))
+    // emit write event
+    this.emit('write', chunk)
     if (typeof callback === 'undefined' && typeof encoding === 'function')
       return this.outcomingMessage.write(chunk, encoding)
     else if (typeof callback === 'function' && typeof encoding !== 'function')
@@ -50,6 +52,8 @@ export class ServerResponse extends OutgoingMessage {
   end(chunk?: any | Callback, encoding?: BufferEncoding | Callback, callback?: Callback): this {
     if (chunk)
       this.buffers.push(Buffer.from(chunk))
+    // emit end event
+    this.emit('end', chunk)
     if (typeof chunk === 'function')
       this.outcomingMessage.end(chunk)
     else if (typeof callback === 'undefined' && typeof encoding === 'function')
