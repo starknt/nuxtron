@@ -13,6 +13,9 @@ export function noExternals(nitro: Nitro): Plugin {
       if (id === 'electron' || id.startsWith('electron/'))
         return { id, external: true }
 
+      if (id.endsWith('.node'))
+        return { id, external: true }
+
       const resolved = await this.resolve(id, from, options)
       if (!resolved) {
         const _resolved = await resolvePath(id, {
@@ -28,13 +31,13 @@ export function noExternals(nitro: Nitro): Plugin {
         if (_resolved)
           return { id: _resolved, external: false }
       }
-      if (!resolved || (resolved.external && !id.endsWith('.wasm'))) {
-        throw new Error(
-    `Cannot resolve ${JSON.stringify(id)} from ${JSON.stringify(
-      from,
-    )} and externals are not allowed!`,
-        )
-      }
+    //   if (!resolved || (resolved.external && !id.endsWith('.wasm'))) {
+    //     throw new Error(
+    // `Cannot resolve ${JSON.stringify(id)} from ${JSON.stringify(
+    //   from,
+    // )} and externals are not allowed!`,
+    //     )
+    //   }
     },
   }
 }

@@ -4,11 +4,14 @@
     "play:electron": "npx electron ./.output/main.prod.mjs",
     "dev": "nuxi dev",
     "build": "nuxi build",
-    "dev:prepare": "nuxi prepare"
+    "dev:prepare": "nuxi prepare",
+    "postinstall": "electron-builder install-app-deps",
+    "package": "electron-builder build"
   },
   "devDependencies": {
     "@unocss/nuxt": "^0.60.2",
     "electron": "latest",
+    "electron-builder": "^24.13.3",
     "nuxt": "latest",
     "renuxtron": "workspace:*",
     "unocss": "^0.60.2"

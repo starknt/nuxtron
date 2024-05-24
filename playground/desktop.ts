@@ -1,10 +1,13 @@
 import '#internal/nuxtron'
 import { BrowserWindow, app } from 'electron'
+import { isElevated } from 'native-is-elevated-rs'
 
 let win: BrowserWindow
 
 app.whenReady()
   .then(() => {
+    // eslint-disable-next-line no-console
+    console.log(isElevated())
     win = new BrowserWindow()
     win.webContents.openDevTools({
       mode: 'detach',

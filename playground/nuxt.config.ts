@@ -17,11 +17,16 @@ export default defineNuxtConfig({
   },
 
   nuxtron: {
-    entry: './desktop/main.ts',
+    entry: './desktop.ts',
+    outDir: './desktop',
     serverOptions: {},
   },
 
   nitro: {
     minify: false,
+
+    commonJS: {
+      transformMixedEsModules: true,
+    },
   },
 })
