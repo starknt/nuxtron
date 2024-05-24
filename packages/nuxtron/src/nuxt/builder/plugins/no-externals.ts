@@ -7,10 +7,7 @@ export function noExternals(nitro: Nitro): Plugin {
   return {
     name: 'no-externals',
     async resolveId(id, from, options) {
-      if (
-        nitro.options.node
-        && (id.startsWith('node:') || builtinModules.includes(id))
-      )
+      if (id.startsWith('node:') || builtinModules.includes(id))
         return { id, external: true }
 
       if (id === 'electron' || id.startsWith('electron/'))

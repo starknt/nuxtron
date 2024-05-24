@@ -3,7 +3,11 @@ import { defineNuxtConfig } from 'nuxt/config'
 export default defineNuxtConfig({
   telemetry: false,
 
-  modules: ['renuxtron/nuxt', '@unocss/nuxt'],
+  modules: [
+    'renuxtron/nuxt',
+    '@unocss/nuxt',
+    // '@nuxt/image',
+  ],
 
   experimental: {
     componentIslands: {
