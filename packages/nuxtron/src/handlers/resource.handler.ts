@@ -1,5 +1,5 @@
 import { dirname, extname, join } from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { URL, fileURLToPath } from 'node:url'
 import { createReadStream } from 'node:fs'
 import fsp from 'node:fs/promises'
 import type { Readable } from 'node:stream'
@@ -109,7 +109,12 @@ export const resourceHandler: ProtocolServerHandler = {
     if (blacklist.some(b => request.url.includes(b)))
       return false
 
-    return /\..*$/.test(request.url)
+    if (request.method !== 'GET')
+      return false
+
+    const { pathname } = new URL(request.url)
+
+    return Object.keys(mimeTypes).some(ext => pathname.endsWith(ext))
   },
   handler,
 }
