@@ -22,6 +22,8 @@ export default defineBuildConfig({
     'chokidar',
     'get-port',
     'magic-string',
+    'klona',
+    'fs-extra',
     'consola',
   ],
 

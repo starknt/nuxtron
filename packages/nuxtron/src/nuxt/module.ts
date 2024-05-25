@@ -1,12 +1,11 @@
-// fix TS2742 error
-import { isAbsolute, join, relative } from 'node:path'
+import { isAbsolute, join } from 'node:path'
 import { addImportsDir, addTypeTemplate, addVitePlugin, createResolver, defineNuxtModule, useLogger, useNuxt } from '@nuxt/kit'
+import { klona } from 'klona'
 import type { NuxtronOptions, NuxtronUserOptions, Sender } from '../types'
 import { build, watch } from './builder/build'
 import { buildTemplate, devTemplate } from './builder/template'
 import { generatePorts, getAvailablePort, toArray } from './helper'
 import { noExternals } from './builder/plugins/no-externals'
-import { importEnv } from './builder/plugins/import-env'
 
 declare module '@nuxt/schema' {
   interface Nuxt {
@@ -29,6 +28,9 @@ export default defineNuxtModule<NuxtronUserOptions>({
   defaults: {
     entry: '',
     port: 5174,
+    serverOptions: {
+      assetDir: './public',
+    },
   },
 
   hooks: {
@@ -46,8 +48,12 @@ export default defineNuxtModule<NuxtronUserOptions>({
       const nuxt = useNuxt()
 
       if (nuxt.options.dev) {
-        // nitro.inlineDynamicImports = false
-        nitro.externals = nitro.externals || {}
+        nitro.inlineDynamicImports = false
+        nitro.experimental = {
+          ...nitro.experimental,
+          websocket: false,
+          typescriptBundlerResolution: true,
+        }
       }
       else {
         // ensure preset is `node`
@@ -59,8 +65,8 @@ export default defineNuxtModule<NuxtronUserOptions>({
         }
         nitro.noExternals = true
         nitro.inlineDynamicImports = true
-        nitro.sourceMap = false
-        nitro.externals = nitro.externals || {}
+        nitro.sourceMap = nitro.debug || false
+        nitro.serveStatic = false
       }
     },
 
@@ -76,37 +82,27 @@ export default defineNuxtModule<NuxtronUserOptions>({
         },
       }
 
+      nitro.options.virtual!['#internal/nuxtron/server-options'] = `
+          export default ${JSON.stringify(nuxt.nuxtron.serverOptions)}
+        `
       if (nitro.options.dev)
         nitro.options.virtual!['#internal/nuxtron'] = devTemplate(nuxt.nuxtron.port!)
-
-      if (!nitro.options.dev) {
-        nitro.options.virtual!['#internal/nuxtron'] = buildTemplate({
-          handler_path: join(nitro.options.output.serverDir, 'index.mjs'),
-          serverOptions: {
-            ...nuxt.nuxtron.serverOptions,
-            assetDir:
-            nuxt.nuxtron.serverOptions?.assetDir
-            ?? relative(nuxt.nuxtron.outDir ?? nitro.options.output.dir, nitro.options.output.publicDir),
-          },
-        })
-      }
-
-      // nitro.options.plugins.push(resolver.resolve('./runtime/plugins/nuxtron.ts'))
+      else
+        nitro.options.virtual!['#internal/nuxtron'] = buildTemplate()
 
       nitro.hooks.hook('rollup:before', (nitro, rollupConfig) => {
-        nuxt.nuxtron.rollupConfig = rollupConfig
-        // override preset related options
-        if (nitro.options.dev) {
-          rollupConfig.input = resolver.resolve('./runtime/nitro-dev.ts')
-        }
-        else {
-          // remove no-externals plugin
+        nuxt.nuxtron.rollupConfig = klona(rollupConfig)
+        // remove inner no-externals plugin
+        if (nitro.options.noExternals) {
           rollupConfig.plugins = toArray<any>(rollupConfig.plugins)!.filter(p => p.name !== 'no-externals')
           toArray(rollupConfig.plugins).push(noExternals(nitro))
-          // remove env import meta plugin
-          rollupConfig.plugins = toArray<any>(rollupConfig.plugins)!.filter(p => p.name !== 'import-meta')
-          toArray(rollupConfig.plugins).push(importEnv())
         }
+
+        // override preset related options
+        if (nitro.options.dev)
+          rollupConfig.input = resolver.resolve('./runtime/nitro-dev.ts')
+        else
+          rollupConfig.input = nuxt.nuxtron.entry
       })
 
       nitro.hooks.hook('compiled', async (nitro) => {
@@ -122,36 +118,27 @@ export default defineNuxtModule<NuxtronUserOptions>({
           }, sender)
         }
         else {
-          await build(nitro, {
-            ...nuxt.nuxtron.rollupConfig,
-            input: nuxt.nuxtron.entry,
-            output: {
-              ...nuxt.nuxtron.rollupConfig!.output,
-              dir: nuxt.nuxtron.outDir ?? nitro.options.output.dir,
-              entryFileNames: 'main.prod.mjs',
-            },
-            external: Array.isArray(nuxt.nuxtron.rollupConfig!.external) ? [...nuxt.nuxtron.rollupConfig!.external, 'electron'] : ['electron'],
-          })
+          await build(nitro, nuxt.nuxtron.rollupConfig!)
         }
       })
     },
   },
 
   async setup(options, nuxt) {
-    if (nuxt.options.dev) {
-      addVitePlugin({
-        name: 'nuxtron',
-        enforce: 'pre',
-        load(id) {
-          if (id === 'electron' || id.startsWith('electron/')) {
-            logger.log('Skip electron import in dev mode')
-            return 'export default {}'
-          }
-        },
-      })
-    }
+    addVitePlugin({
+      name: 'nuxtron',
+      enforce: 'pre',
+      load(id) {
+        if (id === 'electron' || id.startsWith('electron/')) {
+          logger.log('Skip electron import in dev mode')
+          return 'export default {}'
+        }
+      },
+    })
 
-    options.entry = isAbsolute(options.entry) ? options.entry : join(nuxt.options.rootDir, options.entry)
+    options.entry = isAbsolute(options.entry)
+      ? options.entry
+      : join(nuxt.options.rootDir, options.entry)
     options.port = await getAvailablePort({
       port: [options.port!, ...generatePorts(5175, 5180)],
     })

@@ -8,9 +8,15 @@ app.whenReady()
   .then(() => {
     // eslint-disable-next-line no-console
     console.log(isElevated())
-    win = new BrowserWindow()
-    win.webContents.openDevTools({
-      mode: 'detach',
+    win = new BrowserWindow({
+      webPreferences: {
+        devTools: true,
+      },
+    })
+    win.once('ready-to-show', () => {
+      win.webContents.openDevTools({
+        mode: 'detach',
+      })
     })
     if (import.meta.dev)
       win.loadURL('http://localhost:3000')

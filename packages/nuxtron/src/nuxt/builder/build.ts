@@ -6,9 +6,8 @@ import rollup from 'rollup'
 import type { OnResolveResult, PartialMessage } from 'esbuild'
 import defu from 'defu'
 import { resolvePathSync } from 'mlly'
+import { copy } from 'fs-extra'
 import type { RollupConfig, Sender } from '../../types'
-import { toArray } from '../helper'
-import { esmShim } from './plugins/esm-shim'
 
 function resolveModule(path: string) {
   try {
@@ -112,19 +111,6 @@ export async function watch(nitro: Nitro, rollupConfig: RollupConfig, sender: Se
 }
 
 export async function build(nitro: Nitro, rollupConfig: RollupConfig) {
-  toArray(rollupConfig.plugins).push(esmShim())
-
-  if (!nitro.options.static) {
-    const build = await rollup.rollup(rollupConfig!).catch((error) => {
-      nitro.logger.error(formatRollupError(error))
-      throw error
-    })
-
-    await build.write(rollupConfig.output!)
-  }
-
-  // skip nitro json write
-
   // copy runtime files
   const runtimeDir = join(dirname(resolveModule('renuxtron') ?? ''), 'runtime')
   const outputDir = rollupConfig.output.dir || nitro.options.output.dir
@@ -137,6 +123,13 @@ export async function build(nitro: Nitro, rollupConfig: RollupConfig) {
 
     await fsp.copyFile(join(runtimeDir, file), join(destRuntimeDir, file))
   }
+
+  // move public files
+  const publicDir = nitro.options.output.publicDir
+  const destPublicDir = join(nitro.options.output.serverDir, './public')
+  await copy(publicDir, destPublicDir, {
+    recursive: true,
+  })
 }
 
 function formatRollupError(_error: RollupError | OnResolveResult) {

@@ -37,6 +37,7 @@
   },
   "devDependencies": {
     "electron": "^30.0.6",
+    "fs-extra": "^11.2.0",
     "get-port": "^7.1.0",
     "nitropack": "2.9.6",
     "nuxt": "^3.11.2"

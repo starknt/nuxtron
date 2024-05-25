@@ -1,5 +1,3 @@
-import type { ServerOptions } from '../../types'
-
 export function devTemplate(port: number) {
   return `
     import { useNitroApp } from 'nitropack/runtime/app'
@@ -9,34 +7,19 @@ export function devTemplate(port: number) {
     import { runTask, startScheduleRunner } from 'nitropack/runtime/task'
     import { scheduledTasks, tasks } from '#internal/nitro/virtual/tasks'
     import electron from 'electron'
-    import { setupNuxtron } from 'renuxtron/dev'
+    import { setupNuxtron, handler as nuxtronHandler } from 'renuxtron/dev'
 
     await setupNuxtron()
     const nitroApp = useNitroApp()
     const server = new Server((req, res) => {
       if(req.url.startsWith('/_nuxtron')) {
-        let action = req.url.slice('/_nuxtron'.length)
-        if(action.startsWith('/')) {
-          action = action.slice(1)
-        }
-
-        try {
-          switch(action) {
-            case 'page:reload':
-              electron.BrowserWindow.getAllWindows().forEach(w => w.reload())
-              break
-          }
-
-          return res.end('ok:with:' + action)
-        } catch(error) {
-          return res.end('fail:with:' + action)
-        }
+        return nuxtronHandler(req, res, nitroApp)
       }
 
       return toNodeListener(nitroApp.h3App)(req, res)
     })
 
-    server.listen('${port}', () => {
+    server.listen(${port}, () => {
       const _address = server.address()
       process.send?.({
         event: 'address',
@@ -95,16 +78,25 @@ export function devTemplate(port: number) {
   `
 }
 
-export interface BuildTemplateOptions {
-  handler_path: string
-  serverOptions?: ServerOptions
-}
-
-export function buildTemplate(options: BuildTemplateOptions) {
+export function buildTemplate() {
   return `
+    import '#internal/nitro/virtual/polyfill'
+    import nuxtronServerOptions from '#internal/nuxtron/server-options'
+    import { toNodeListener } from 'h3'
+    import { nitroApp } from 'nitropack/runtime/app'
+    import { trapUnhandledNodeErrors } from 'nitropack/runtime/utils'
+    import { startScheduleRunner } from 'nitropack/runtime/task'
     import { setupNuxtron } from 'renuxtron'
-    import { handler as $_internal_handler } from '${options.handler_path}'
 
-    await setupNuxtron($_internal_handler, ${JSON.stringify(options.serverOptions)})
+    const listener = toNodeListener(nitroApp.h3App)
+
+    await setupNuxtron(listener, nuxtronServerOptions)
+
+    // Trap unhandled errors
+    trapUnhandledNodeErrors()
+
+    // Scheduled tasks
+    if (import.meta._tasks)
+      startScheduleRunner()
   `
 }

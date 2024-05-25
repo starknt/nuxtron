@@ -5,9 +5,7 @@
   "asar": true,
   "asarUnpack": "**\\*.{dll, node}",
   "files": [
-    "main.prod.mjs",
-    "nuxtron",
-    "public",
+    "dist",
     "node_modules",
     "!node_modules/.modules.yaml",
     "!node_modules/**/.pnpm",
@@ -68,7 +66,7 @@
     }
   },
   "directories": {
-    "app": "desktop",
+    "app": "release/app",
     "output": "release/build"
   }
 }

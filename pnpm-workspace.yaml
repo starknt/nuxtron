@@ -1,6 +1,6 @@
 packages:
   - playground
-  - ./playground/desktop
+  - ./playground/release/app
   - 'packages/*'
   - 'examples/*'
   - docs

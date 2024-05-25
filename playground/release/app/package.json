@@ -1,0 +1,12 @@
+{
+  "name": "playground",
+  "version": "0.0.0",
+  "author": {
+    "name": "starknt",
+    "url": "https://github.com/starknt"
+  },
+  "main": "./dist/index.mjs",
+  "dependencies": {
+    "native-is-elevated-rs": "^0.0.1-beta.5"
+  }
+}

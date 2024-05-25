@@ -9,6 +9,11 @@ export default defineNuxtConfig({
     // '@nuxt/image',
   ],
 
+  // TODO: prerendering support
+  // routeRules: {
+  //   '/prerender': { prerender: true },
+  // },
+
   experimental: {
     componentIslands: {
       selectiveClient: true,

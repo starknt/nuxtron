@@ -7,12 +7,12 @@ import { workDirname } from './utils/path'
 import type { ServerRequest } from './handlers/types'
 
 async function createProtocolServer(handler: RequestListener, options: ServerOptions) {
-  const _options = defu<Required<ServerOptions>, ServerOptions[]>({
+  const _options = defu<Required<ServerOptions>, ServerOptions[]>(options, {
     assetDir: './public',
     scheme: 'nitro',
     privileges: {},
     extraSchemes: [],
-  }, options)
+  })
 
   protocol.registerSchemesAsPrivileged([
     {

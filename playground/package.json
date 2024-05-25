@@ -3,10 +3,13 @@
   "scripts": {
     "play:electron": "npx electron ./.output/main.prod.mjs",
     "dev": "nuxi dev",
-    "build": "nuxi build",
+    "build": "nuxi build && tsx scripts/move-to-release.ts",
     "dev:prepare": "nuxi prepare",
-    "postinstall": "electron-builder install-app-deps",
-    "package": "electron-builder build"
+    "package": "electron-builder build",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "dependencies": {
+    "native-is-elevated-rs": "^0.0.1-beta.5"
   },
   "devDependencies": {
     "@unocss/nuxt": "^0.60.2",
