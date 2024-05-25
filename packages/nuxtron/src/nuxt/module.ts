@@ -85,6 +85,14 @@ export default defineNuxtModule<NuxtronUserOptions>({
       nitro.options.virtual!['#internal/nuxtron/server-options'] = `
           export default ${JSON.stringify(nuxt.nuxtron.serverOptions)}
         `
+      nitro.options.virtual!['#internal/nuxtron/shims'] = `
+        import { fileURLToPath } from 'node:url';
+        import { dirname } from 'node:path';
+        import { createRequire } from 'node:module';
+        globalThis.__filename = fileURLToPath(import.meta.url);
+        globalThis.__dirname = dirname(__filename);
+        globalThis.require = createRequire(import.meta.url);
+      `
       if (nitro.options.dev)
         nitro.options.virtual!['#internal/nuxtron'] = devTemplate(nuxt.nuxtron.port!)
       else
@@ -92,11 +100,11 @@ export default defineNuxtModule<NuxtronUserOptions>({
 
       nitro.hooks.hook('rollup:before', (nitro, rollupConfig) => {
         nuxt.nuxtron.rollupConfig = klona(rollupConfig)
+        rollupConfig.plugins = toArray<any>(rollupConfig.plugins)!.filter(p => p.name !== 'no-externals')
+
         // remove inner no-externals plugin
-        if (nitro.options.noExternals) {
-          rollupConfig.plugins = toArray<any>(rollupConfig.plugins)!.filter(p => p.name !== 'no-externals')
+        if (nitro.options.noExternals)
           toArray(rollupConfig.plugins).push(noExternals(nitro))
-        }
 
         // override preset related options
         if (nitro.options.dev)

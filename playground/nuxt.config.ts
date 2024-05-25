@@ -28,7 +28,7 @@ export default defineNuxtConfig({
   },
 
   nitro: {
-    minify: false,
+    minify: true,
 
     commonJS: {
       transformMixedEsModules: true,

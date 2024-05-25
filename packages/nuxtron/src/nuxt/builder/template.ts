@@ -81,6 +81,7 @@ export function devTemplate(port: number) {
 export function buildTemplate() {
   return `
     import '#internal/nitro/virtual/polyfill'
+    import '#internal/nuxtron/shims'
     import nuxtronServerOptions from '#internal/nuxtron/server-options'
     import { toNodeListener } from 'h3'
     import { nitroApp } from 'nitropack/runtime/app'
