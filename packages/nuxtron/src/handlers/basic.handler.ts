@@ -38,7 +38,10 @@ export function handler(handler: RequestListener): ServerHandler {
     return new Promise((resolve) => {
       res.outcomingMessage.once('error', () => {
         guard(() => {
-          const response = new Response(null, { status: HttpStatusCode.INTERNAL_SERVER_ERROR }) as ServerHandlerResponse
+          const response = new Response(null, {
+            status: HttpStatusCode.INTERNAL_SERVER_ERROR,
+          }) as ServerHandlerResponse
+
           response.originalRequest = req
           response.originalResponse = res
           resolve(response)
@@ -50,9 +53,7 @@ export function handler(handler: RequestListener): ServerHandler {
           const response = new Response(Buffer.concat(res.buffers), {
             status: res.statusCode,
             statusText: res.statusMessage,
-            headers: {
-              ...formatOutgoingHttpHeaders(res.getHeaders()),
-            },
+            headers: formatOutgoingHttpHeaders(res.getHeaders()),
           }) as ServerHandlerResponse
 
           response.originalRequest = req
@@ -66,9 +67,7 @@ export function handler(handler: RequestListener): ServerHandler {
           const response = new Response(res.outcomingMessage as any, {
             status: res.statusCode,
             statusText: res.statusMessage,
-            headers: {
-              ...formatOutgoingHttpHeaders(res.getHeaders()),
-            },
+            headers: formatOutgoingHttpHeaders(res.getHeaders()),
           }) as ServerHandlerResponse
 
           response.originalRequest = req
