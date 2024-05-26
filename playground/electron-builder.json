@@ -65,6 +65,24 @@
       "CFBundleDevelopmentRegion": "en"
     }
   },
+
+  "linux": {
+    "icon": "buildResources/icons/png/256x256.png",
+    "artifactName": "${productName}-linux-${arch}-${version}.${ext}",
+    "category": "Utility",
+    "synopsis": "Boilerplate",
+    "desktop": {
+      "Name": "Boilerplate",
+      "Type": "Application",
+      "GenericName": "Boilerplate"
+    },
+    "target": [
+      "deb",
+      "AppImage",
+      "rpm",
+      "tar.gz"
+    ]
+  },
   "directories": {
     "app": "release/app",
     "output": "release/build"
