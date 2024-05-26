@@ -6,17 +6,26 @@ export function useIpcMain() {
     throw new Error('IpcMain is not supported in client')
 
   const { ipcMain } = useElectron()
-
+  // TODO: improve impl
   return {
     ...ipcMain,
+    on(channel, listener) {
+      // ensure dispose handler
+      ipcMain.removeAllListeners(channel)
+
+      return ipcMain.on(channel, listener)
+    },
     handle(channel, listener) {
-      // Reference: https://github.com/electron/electron/blob/main/lib/browser/ipc-main-impl.ts
-      // @ts-expect-error private field
-      if (ipcMain._invokeHandlers.has(channel))
-        // @ts-expect-error private field
-        return ipcMain._invokeHandlers.set(channel, listener)
+      // ensure dispose handler
+      ipcMain.removeHandler(channel)
 
       return ipcMain.handle(channel, listener)
+    },
+    addListener(eventName, listener) {
+      // ensure dispose handler
+      ipcMain.removeAllListeners(eventName as string)
+
+      return ipcMain.addListener(eventName, listener)
     },
   } satisfies IpcMain
 }
