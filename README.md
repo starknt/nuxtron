@@ -22,6 +22,10 @@ If you want to know the project status, please check the [GitHub issue](https://
 
 **Nuxtron** help you build electron app power by [**Nuxt**](https://nuxt.com).
 
+## How It Works
+
+When you build your app with Nuxtron, it will provide an `ProtocolServer` to mock Node Http Server, but it's not a real server. The `ProtocolServer` through the Electron Custom Protocol to communicate with Nuxt.
+
 ## Document
 
 Read the [documentation](https://starknt.github.io/nuxtron) for more details.
