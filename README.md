@@ -24,7 +24,7 @@ If you want to know the project status, please check the [GitHub issue](https://
 
 ## How It Works
 
-When you build your app with Nuxtron, it will provide an `ProtocolServer` to mock Node Http Server, but it's not a real server. The `ProtocolServer` through the Electron Custom Protocol to communicate with Nuxt.
+When you build your app with Nuxtron, it will provide an `ProtocolServer` to mock Node Http Server, but it's not a real server. The `ProtocolServer` through the Electron Custom Protocol to communicate with Nitro.
 
 ## Document
 
