@@ -8,13 +8,12 @@
     "package": "electron-builder build"
   },
   "dependencies": {
-    "native-is-elevated-rs": "^0.0.1-beta.5"
   },
   "devDependencies": {
     "@unocss/nuxt": "^0.60.2",
     "electron": "latest",
     "electron-builder": "^24.13.3",
-    "nuxt": "latest",
+    "nuxt": "^3.14.1592",
     "renuxtron": "workspace:*",
     "unocss": "^0.60.2"
   }

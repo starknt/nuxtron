@@ -50,7 +50,7 @@ export function handler(handler: RequestListener): ServerHandler {
 
       res.outcomingMessage.once('finish', () => {
         guard(() => {
-          const response = new Response(Buffer.concat(res.buffers), {
+          const response = new Response(Buffer.concat(res.buffers.map(b => new Uint8Array(b.buffer))), {
             status: res.statusCode,
             statusText: res.statusMessage,
             headers: formatOutgoingHttpHeaders(res.getHeaders()),
